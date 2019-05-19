@@ -34,7 +34,14 @@ struct DIBHeader {
 // Reset packing
 #pragma pack(pop)
 
+// 24 bit color
+struct Color24 {
+    uint8_t red;
+    uint8_t green;
+    uint8_t blue;
+};
+
 // writeBitmap function
-bool writeBitmap(std::string, const FileHeader&, const DIBHeader&, const std::vector<std::vector<uint8_t>>&);
+bool writeBitmap24(std::string, const std::vector<std::vector<Color24>>&);
 
 #endif

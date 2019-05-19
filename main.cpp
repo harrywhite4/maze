@@ -15,37 +15,20 @@ int main(int argc, char *argv[]) {
     int imgWidth = 1000, imgHeight = 1000;
     std::string fname = argv[1];
 
-    // Setup headers
-    FileHeader fhead;
-
-    DIBHeader dhead;
-    dhead.imageWidth = imgWidth;
-    dhead.imageHeight = imgHeight;
-    dhead.bitsPerPixel = 24;
-
     // Build data
-    int rowWidth = imgWidth * 3;
-    std::vector<std::vector<uint8_t>> data(imgHeight, std::vector<uint8_t>(rowWidth, 0));
+    std::vector<std::vector<Color24>> data(imgHeight, std::vector<Color24>(imgWidth));
 
     for (int r = 0; r < imgHeight; ++r) {
-        for (int i = 0; i < rowWidth; i += 3) {
-            // TODO use color struct
-            // Blue
-            data[r][i] = r % 256;
-            // Green
-            data[r][i + 1] = 255 - (r % 256);
-            // Red
-            data[r][i + 2] = r % 100;
+        for (int i = 0; i < imgWidth; ++i) {
+            data[r][i].red = r % 100;
+            data[r][i].green = 255 - (r % 256);
+            data[r][i].blue = r % 256;
         }
     }
 
-    // Set header sizes
-    dhead.imageSize = imgHeight * rowWidth;
-    fhead.size = dhead.imageSize + 54;
-
     // Write bmp
     std::cout << "Writing to " << fname << "\n";
-    bool success = writeBitmap(fname, fhead, dhead, data);
+    bool success = writeBitmap24(fname, data);
 
     if (!success) {
         std::cout << "Could not write to file\n";

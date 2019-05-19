@@ -6,9 +6,30 @@
 #include "bitmap.hpp"
 
 
-// Write image data to bitmap file (adding padding if neccesary
-bool writeBitmap(std::string fname, const FileHeader& fhead, const DIBHeader& dhead, const std::vector<std::vector<uint8_t>>& data) {
-    // TODO make sure input contains vectors of same length
+// Write 24 bit color data to bitmap file (adding padding if neccesary)
+bool writeBitmap24(std::string fname, const std::vector<std::vector<Color24>>& data) {
+    // Get sizes
+    unsigned int imageHeight = data.size();
+    unsigned int imageWidth = data[0].size();
+    // make sure input contains vectors of same length
+    for (auto row : data) {
+        if (row.size() != imageWidth) {
+            return false;
+        }
+    }
+    // Determine padding
+    int paddingBytes = imageWidth % 4;
+
+    // Setup headers
+    DIBHeader dhead;
+    dhead.imageSize = imageWidth * imageHeight * 3;
+    dhead.imageWidth = imageWidth;
+    dhead.imageHeight = imageHeight;
+    dhead.bitsPerPixel = 24;
+
+    FileHeader fhead;
+    fhead.size = dhead.imageSize + 54;
+
     // Write to file
     std::ofstream file;
     // Open file for binary output
@@ -17,11 +38,10 @@ bool writeBitmap(std::string fname, const FileHeader& fhead, const DIBHeader& dh
     file.write((char*)&fhead, sizeof(FileHeader));
     file.write((char*)&dhead, sizeof(DIBHeader));
     // Write data
-    int paddingBytes = data[0].size() % 4;
-    for (std::vector<uint8_t> row : data) {
-        // Write data
-        for (uint8_t el : row) {
-            file << el;
+    for (auto row : data) {
+        // Write colors
+        for (auto c : row) {
+            file << c.blue << c.green << c.red;
         }
         // Write padding
         for (int i = 0; i < paddingBytes; ++i) {
