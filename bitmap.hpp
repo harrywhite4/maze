@@ -1,8 +1,8 @@
-#include <string>
-#include <vector>
-
 #ifndef MAZE_BITMAP_H_
 #define MAZE_BITMAP_H_
+
+#include <string>
+#include <vector>
 
 // Pack these structs without any padding
 #pragma pack(push, 1)
@@ -35,6 +35,6 @@ struct DIBHeader {
 #pragma pack(pop)
 
 // writeBitmap function
-bool writeBitmap(std::string, const FileHeader&, const DIBHeader &, const std::vector<std::vector<uint8_t>>&);
+bool writeBitmap(std::string, const FileHeader&, const DIBHeader&, const std::vector<std::vector<uint8_t>>&);
 
 #endif
