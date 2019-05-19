@@ -7,11 +7,10 @@ OBJECTS=bitmap.o main.o
 $(BINNAME): $(OBJECTS)
 	$(CXX) $(CPPFLAGS) $(OBJECTS) -o $(BINNAME)
 
-bitmap.o: bitmap.cpp bitmap.hpp
-	$(CXX) $(CPPFLAGS) -c bitmap.cpp
-
-main.o: main.cpp bitmap.hpp
-	$(CXX) $(CPPFLAGS) -c main.cpp
-
+.PHONY: clean
 clean:
-	rm *.o $(BINNAME)
+	rm -f *.o
+
+.PHONY: distclean
+distclean: clean
+	rm -f $(BINNAME)
