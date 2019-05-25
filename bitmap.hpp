@@ -20,7 +20,7 @@ struct FileHeader {
     uint32_t size;
     uint16_t reserved1 = 0;
     uint16_t reserved2 = 0;
-    uint32_t imageDataOffset = 54;
+    uint32_t imageDataOffset;
 };
 
 // Bitmap DIB header (BITMAPINFOHEADER style)
