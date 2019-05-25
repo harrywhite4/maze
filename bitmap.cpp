@@ -21,6 +21,7 @@ void writeHeaders(std::ofstream& file, uint32_t imageWidth,
 
     // Determine padding
     int paddingBytes = ((imageWidth * bitsPerPixel) / 8) % 4;
+
     // Setup headers
     DIBHeader dhead;
 
@@ -34,6 +35,7 @@ void writeHeaders(std::ofstream& file, uint32_t imageWidth,
     fhead.size = dhead.imageSize + 54 + (colorTableEntries * 4);
     std::cout << "Projected size: " << fhead.size << " bytes\n";
 
+    // Write headers
     file.write((char*)&fhead, sizeof(FileHeader));
     file.write((char*)&dhead, sizeof(DIBHeader));
 }
