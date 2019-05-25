@@ -2,10 +2,15 @@ CXX=g++-8
 CPPFLAGS=-std=c++17 -Wall -Wpedantic
 BINNAME=maze
 
-OBJECTS=bitmap.o main.o
+SOURCES=$(wildcard *.cpp)
+OBJECTS=$(SOURCES:%.cpp=%.o)
 
 $(BINNAME): $(OBJECTS)
 	$(CXX) $(CPPFLAGS) $(OBJECTS) -o $(BINNAME)
+
+main.o: main.cpp bitmap.hpp
+
+bitmap.o: bitmap.cpp bitmap.hpp
 
 .PHONY: clean
 clean:
