@@ -1,21 +1,27 @@
-CXX=g++-8
-CPPFLAGS=-std=c++17 -Wall -Wpedantic
-BINNAME=maze
+CXX ?= g++
+CPPFLAGS = -std=c++17 -Wall -Wpedantic
+BINNAME = maze
 
-SOURCES=$(wildcard *.cpp)
-OBJECTS=$(SOURCES:%.cpp=%.o)
+SOURCES = $(wildcard *.cpp)
+OBJECTS = $(SOURCES:%.cpp=%.o)
+DEPS = $(SOURCES:%.cpp=%.d)
 
+# Link objects
 $(BINNAME): $(OBJECTS)
 	$(CXX) $(CPPFLAGS) $(OBJECTS) -o $(BINNAME)
 
-main.o: main.cpp bitmap.hpp
+# Include generated deps rules
+-include $(DEPS)
 
-bitmap.o: bitmap.cpp bitmap.hpp
+# Object files
+# after first compilation will be joined with generated deps rules
+%.o: %.cpp
+	$(CXX) $(CPPFLAGS) -MP -MMD -c $< -o $@
 
 .PHONY: clean
 clean:
-	rm -f *.o
+	$(RM) *.o *.d
 
 .PHONY: distclean
 distclean: clean
-	rm -f $(BINNAME)
+	$(RM) $(BINNAME)

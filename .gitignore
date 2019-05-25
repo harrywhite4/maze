@@ -1,4 +1,5 @@
 *.bmp
 *.o
+*.d
 maze
 *.out
