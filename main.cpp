@@ -4,7 +4,10 @@
 
 #include "bitmap.hpp"
 
-const std::string usage = "Usage: bitmap fname\n";
+const std::string usage = "Usage: bitmap [options] fname\nOptions:"
+                          "\n--color Use color image\n"
+                          "--bw Use black and white image\n"
+                          "--help Print help\n";
 
 int main(int argc, char *argv[]) {
     // Variables
@@ -24,7 +27,7 @@ int main(int argc, char *argv[]) {
 
     // Set based on posArgs
     if (posArgs.size() != 1) {
-        std::cerr << usage;
+        std::cerr << "Filename positional argument required\n" << usage;
         exit(EXIT_FAILURE);
     }
     std::string fname = posArgs[0];
@@ -35,6 +38,12 @@ int main(int argc, char *argv[]) {
             BlackWhite = true;
         } else if (flag == "--color") {
             BlackWhite = false;
+        } else if (flag == "--help") {
+            std::cout << usage;
+            exit(EXIT_SUCCESS);
+        } else {
+            std::cerr << "Invalid argument " << flag << "\n" << usage;
+            exit(EXIT_FAILURE);
         }
     }
         
