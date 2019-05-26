@@ -8,7 +8,7 @@ DEPS = $(SOURCES:%.cpp=%.d)
 
 # Link objects
 $(BINNAME): $(OBJECTS)
-	$(CXX) $(CPPFLAGS) $(OBJECTS) -o $(BINNAME)
+	$(CXX) $(CPPFLAGS) $(OBJECTS) $(LDFLAGS) -o $(BINNAME)
 
 # Include generated deps rules
 -include $(DEPS)
