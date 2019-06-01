@@ -8,8 +8,8 @@ BINDIR = bin
 
 BINPATH = $(BINDIR)/$(BINNAME)
 SOURCES = $(wildcard $(SRCDIR)/*.cpp)
-OBJECTS = $(SOURCES:%.cpp=%.o)
-DEPS = $(SOURCES:%.cpp=%.d)
+OBJECTS = $(SOURCES:$(SRCDIR)/%.cpp=$(BINDIR)/%.o)
+DEPS = $(SOURCES:$(SRCDIR)/%.cpp=$(BINDIR)/%.d)
 
 # Link objects
 $(BINPATH): $(BINDIR) $(OBJECTS)
@@ -24,7 +24,7 @@ $(BINDIR):
 
 # Object files
 # after first compilation will be joined with generated deps rules
-%.o: %.cpp
+$(BINDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CXX) $(CPPFLAGS) -MP -MMD -c $< -o $@
 
 .PHONY: clean
