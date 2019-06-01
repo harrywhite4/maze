@@ -29,7 +29,7 @@ $(BINDIR)/%.o: $(SRCDIR)/%.cpp
 
 .PHONY: clean
 clean:
-	$(RM) $(SRCDIR)/*.o $(SRCDIR)/*.d
+	$(RM) $(BINDIR)/*.o $(BINDIR)/*.d
 
 .PHONY: distclean
 distclean: clean
