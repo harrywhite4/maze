@@ -21,6 +21,31 @@ unsigned int GridGraph::columnNumber(unsigned int node) {
     return node % numColumns;
 }
 
+OptionalNode GridGraph::nodeInDirection(unsigned int start, Direction dir) {
+    if (validNode(start)) {
+        unsigned int rowNum = rowNumber(start);
+        switch(dir) {
+            case Left:
+                if (validNode(start-1)) {
+                    return {true, start-1};
+                }
+            case Right:
+                if (validNode(start+1)) {
+                    return {true, start+1};
+                }
+            case Up:
+                if (rowNum-1 >= 0) {
+                    return {true, (rowNum-1) + columnNumber(start)};
+                }
+            case Down:
+                if (rowNum+1 < numRows) {
+                    return {true, (rowNum+1) + columnNumber(start)};
+                }
+        }
+    }
+    return {false, 0};
+}
+
 bool GridGraph::hasEdge(unsigned int node, Direction dir) {
     if (!validNode(node)) {
         return false;

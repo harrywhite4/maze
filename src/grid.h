@@ -5,6 +5,11 @@
 
 enum Direction {Left, Right, Up, Down};
 
+struct OptionalNode {
+    bool valid;
+    unsigned int node;
+};
+
 class GridGraph {
     
     unsigned int numRows;
@@ -28,6 +33,9 @@ class GridGraph {
 
     // 0 indexed column number
     unsigned int columnNumber(unsigned int node);
+
+    // Get the node in direction dir from start if valid
+    OptionalNode nodeInDirection(unsigned int start, Direction dir);
 
     // Whether edge in this direction from node exists
     bool hasEdge(unsigned int node, Direction dir);
