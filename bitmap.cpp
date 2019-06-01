@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "bitmap.hpp"
+#include "bitmap.h"
 
 
 template <typename T>

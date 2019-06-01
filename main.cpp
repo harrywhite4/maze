@@ -2,7 +2,7 @@
 #include <vector>
 #include <iostream>
 
-#include "bitmap.hpp"
+#include "bitmap.h"
 
 const std::string usage = "Usage: bitmap [options] fname\nOptions:"
                           "\n--color Use color image\n"
