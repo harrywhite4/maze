@@ -1,17 +1,23 @@
 CXX ?= g++
-CPPFLAGS = -std=c++17 -Wall -Wpedantic
+CXXFLAGS = -std=c++17 -Wall -Wpedantic
+MKDIR = mkdir -p
+RMDIR = rmdir
 BINNAME = maze
 SRCDIR = src
 BINDIR = bin
 
+BINPATH = $(BINDIR)/$(BINNAME)
 SOURCES = $(wildcard $(SRCDIR)/*.cpp)
 OBJECTS = $(SOURCES:%.cpp=%.o)
 DEPS = $(SOURCES:%.cpp=%.d)
 
 # Link objects
-$(BINNAME): $(OBJECTS)
-	mkdir -p $(BINDIR)
-	$(CXX) $(CPPFLAGS) $(OBJECTS) $(LDFLAGS) -o $(BINDIR)/$(BINNAME)
+$(BINPATH): $(BINDIR) $(OBJECTS)
+	$(CXX) $(CXXFLAGS) $(OBJECTS) $(LDFLAGS) -o $(BINPATH)
+
+# Create dir
+$(BINDIR):
+	$(MKDIR) $(BINDIR)
 
 # Include generated deps rules
 -include $(DEPS)
@@ -27,4 +33,5 @@ clean:
 
 .PHONY: distclean
 distclean: clean
-	$(RM) $(BINDIR)/$(BINNAME)
+	$(RM) $(BINPATH)
+	$(RMDIR) $(BINDIR)
