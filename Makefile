@@ -1,37 +1,40 @@
 CXX ?= g++
 CXXFLAGS = -std=c++17 -Wall -Wpedantic
 MKDIR = mkdir -p
-RMDIR = rmdir
 BINNAME = maze
 SRCDIR = src
+BUILDDIR = build
 BINDIR = bin
 
 BINPATH = $(BINDIR)/$(BINNAME)
 SOURCES = $(wildcard $(SRCDIR)/*.cpp)
-OBJECTS = $(SOURCES:$(SRCDIR)/%.cpp=$(BINDIR)/%.o)
-DEPS = $(SOURCES:$(SRCDIR)/%.cpp=$(BINDIR)/%.d)
+OBJECTS = $(SOURCES:$(SRCDIR)/%.cpp=$(BUILDDIR)/%.o)
+DEPS = $(SOURCES:$(SRCDIR)/%.cpp=$(BUILDDIR)/%.d)
 
 # Link objects
-$(BINPATH): $(BINDIR) $(OBJECTS)
+$(BINPATH): $(OBJECTS) | $(BINDIR)
 	$(CXX) $(CXXFLAGS) $(OBJECTS) $(LDFLAGS) -o $(BINPATH)
 
-# Create dir
+# Create bin dir
 $(BINDIR):
 	$(MKDIR) $(BINDIR)
+
+# Create build dir
+$(BUILDDIR):
+	$(MKDIR) $(BUILDDIR)
 
 # Include generated deps rules
 -include $(DEPS)
 
 # Object files
 # after first compilation will be joined with generated deps rules
-$(BINDIR)/%.o: $(SRCDIR)/%.cpp
+$(BUILDDIR)/%.o: $(SRCDIR)/%.cpp | $(BUILDDIR)
 	$(CXX) $(CPPFLAGS) -MP -MMD -c $< -o $@
 
 .PHONY: clean
 clean:
-	$(RM) $(BINDIR)/*.o $(BINDIR)/*.d
+	$(RM) $(BUILDDIR)/*.o $(BUILDDIR)/*.d
 
 .PHONY: distclean
 distclean: clean
 	$(RM) $(BINPATH)
-	$(RMDIR) $(BINDIR)
