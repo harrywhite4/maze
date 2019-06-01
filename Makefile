@@ -1,14 +1,17 @@
 CXX ?= g++
 CPPFLAGS = -std=c++17 -Wall -Wpedantic
 BINNAME = maze
+SRCDIR = src
+BINDIR = bin
 
-SOURCES = $(wildcard *.cpp)
+SOURCES = $(wildcard $(SRCDIR)/*.cpp)
 OBJECTS = $(SOURCES:%.cpp=%.o)
 DEPS = $(SOURCES:%.cpp=%.d)
 
 # Link objects
 $(BINNAME): $(OBJECTS)
-	$(CXX) $(CPPFLAGS) $(OBJECTS) $(LDFLAGS) -o $(BINNAME)
+	mkdir -p $(BINDIR)
+	$(CXX) $(CPPFLAGS) $(OBJECTS) $(LDFLAGS) -o $(BINDIR)/$(BINNAME)
 
 # Include generated deps rules
 -include $(DEPS)
@@ -20,8 +23,8 @@ $(BINNAME): $(OBJECTS)
 
 .PHONY: clean
 clean:
-	$(RM) *.o *.d
+	$(RM) $(SRCDIR)/*.o $(SRCDIR)/*.d
 
 .PHONY: distclean
 distclean: clean
-	$(RM) $(BINNAME)
+	$(RM) $(BINDIR)/$(BINNAME)
