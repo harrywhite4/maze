@@ -25,13 +25,6 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    // Set based on posArgs
-    if (posArgs.size() != 1) {
-        std::cerr << "Filename positional argument required\n" << usage;
-        exit(EXIT_FAILURE);
-    }
-    std::string fname = posArgs[0];
-
     // Set based on flagArgs
     for (auto flag : flagArgs) {
         if (flag == "--bw") {
@@ -46,7 +39,14 @@ int main(int argc, char *argv[]) {
             exit(EXIT_FAILURE);
         }
     }
-        
+
+    // Set based on posArgs
+    if (posArgs.size() != 1) {
+        std::cerr << "Filename positional argument required\n" << usage;
+        exit(EXIT_FAILURE);
+    }
+    std::string fname = posArgs[0];
+
     // Build data
     if (!BlackWhite) {
         imgWidth = 1000;
