@@ -3,7 +3,7 @@
 #include "maze.hpp"
 #include "grid.hpp"
 
-std::vector<std::vector<bool>> graphToImage(GridGraph& graph) {
+std::vector<std::vector<bool>> graphToImage(const GridGraph& graph) {
     unsigned int pixelX, pixelY, row, column;
     unsigned int numNodes = graph.getNumNodes();
     unsigned int imageRows = (graph.getNumRows() * 2) + 1;

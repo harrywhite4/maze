@@ -9,31 +9,31 @@ GridGraph::GridGraph(unsigned int numRows, unsigned int numColumns) :
     downEdges(numColumns * numRows, false) {
 }
 
-bool GridGraph::validNode(unsigned int node) {
+bool GridGraph::validNode(unsigned int node) const {
     return (node < getNumNodes());
 }
 
-unsigned int GridGraph::getNumNodes() {
+unsigned int GridGraph::getNumNodes() const {
     return numRows * numColumns;
 }
 
-unsigned int GridGraph::getNumRows() {
+unsigned int GridGraph::getNumRows() const {
     return numRows;
 }
 
-unsigned int GridGraph::getNumColumns() {
+unsigned int GridGraph::getNumColumns() const {
     return numColumns;
 }
 
-unsigned int GridGraph::rowNumber(unsigned int node) {
+unsigned int GridGraph::rowNumber(unsigned int node) const {
     return node / numColumns;
 }
 
-unsigned int GridGraph::columnNumber(unsigned int node) {
+unsigned int GridGraph::columnNumber(unsigned int node) const {
     return node % numColumns;
 }
 
-OptionalNode GridGraph::nodeInDirection(unsigned int start, Direction dir) {
+OptionalNode GridGraph::nodeInDirection(unsigned int start, Direction dir) const {
     if (validNode(start)) {
         unsigned int rowNum = rowNumber(start);
         switch(dir) {
@@ -58,7 +58,7 @@ OptionalNode GridGraph::nodeInDirection(unsigned int start, Direction dir) {
     return {false, 0};
 }
 
-bool GridGraph::hasEdge(unsigned int node, Direction dir) {
+bool GridGraph::hasEdge(unsigned int node, Direction dir) const {
     if (!validNode(node)) {
         return false;
     }

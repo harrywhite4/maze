@@ -26,28 +26,28 @@ class GridGraph {
     GridGraph(unsigned int numRows, unsigned int rowWidth);
 
     // Whether node number is valid
-    bool validNode(unsigned int node);
+    bool validNode(unsigned int node) const;
 
     // 0 indexed row number
-    unsigned int rowNumber(unsigned int node);
+    unsigned int rowNumber(unsigned int node) const;
 
     // 0 indexed column number
-    unsigned int columnNumber(unsigned int node);
+    unsigned int columnNumber(unsigned int node) const;
 
     // Number of nodes in the graph
-    unsigned int getNumNodes();
+    unsigned int getNumNodes() const;
     
     // Number of rows in the graph
-    unsigned int getNumRows();
+    unsigned int getNumRows() const;
 
     // Number of nodes in the graph
-    unsigned int getNumColumns();
+    unsigned int getNumColumns() const;
 
     // Get the node in direction dir from start if valid
-    OptionalNode nodeInDirection(unsigned int start, Direction dir);
+    OptionalNode nodeInDirection(unsigned int start, Direction dir) const;
 
     // Whether edge in this direction from node exists
-    bool hasEdge(unsigned int node, Direction dir);
+    bool hasEdge(unsigned int node, Direction dir) const;
 
     // Add an edge from node in this direction, return whether edge was added
     bool addEdge(unsigned int node, Direction dir);
