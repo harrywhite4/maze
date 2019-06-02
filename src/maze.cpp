@@ -1,7 +1,7 @@
 #include <vector>
 
-#include "maze.h"
-#include "grid.h"
+#include "maze.hpp"
+#include "grid.hpp"
 
 std::vector<std::vector<bool>> graphToImage(GridGraph& graph) {
     unsigned int pixelX, pixelY, row, column;

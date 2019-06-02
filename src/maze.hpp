@@ -2,7 +2,7 @@
 #define MAZE_MAZE_H_
 
 #include <vector>
-#include "grid.h"
+#include "grid.hpp"
 
 std::vector<std::vector<bool>> graphToImage(GridGraph& graph);
 

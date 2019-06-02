@@ -1,6 +1,6 @@
 #include <vector>
 
-#include "grid.h"
+#include "grid.hpp"
 
 GridGraph::GridGraph(unsigned int numRows, unsigned int numColumns) : 
     numRows(numRows), 
