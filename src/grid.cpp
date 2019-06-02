@@ -10,7 +10,19 @@ GridGraph::GridGraph(unsigned int numRows, unsigned int numColumns) :
 }
 
 bool GridGraph::validNode(unsigned int node) {
-    return (node <= (numRows * numColumns));
+    return (node < getNumNodes());
+}
+
+unsigned int GridGraph::getNumNodes() {
+    return numRows * numColumns;
+}
+
+unsigned int GridGraph::getNumRows() {
+    return numRows;
+}
+
+unsigned int GridGraph::getNumColumns() {
+    return numColumns;
 }
 
 unsigned int GridGraph::rowNumber(unsigned int node) {

@@ -34,6 +34,15 @@ class GridGraph {
     // 0 indexed column number
     unsigned int columnNumber(unsigned int node);
 
+    // Number of nodes in the graph
+    unsigned int getNumNodes();
+    
+    // Number of rows in the graph
+    unsigned int getNumRows();
+
+    // Number of nodes in the graph
+    unsigned int getNumColumns();
+
     // Get the node in direction dir from start if valid
     OptionalNode nodeInDirection(unsigned int start, Direction dir);
 
