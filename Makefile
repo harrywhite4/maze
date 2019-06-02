@@ -1,5 +1,5 @@
 CXX ?= g++
-CXXFLAGS = -std=c++17 -Wall -Wpedantic
+CXXFLAGS = -std=c++17 -Wall -Wpedantic -Werror
 MKDIR = mkdir -p
 BINNAME = maze
 SRCDIR = src
