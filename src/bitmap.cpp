@@ -16,11 +16,30 @@ bool validateSize(unsigned int size, const std::vector<std::vector<T>>& vec) {
     return true;
 }
 
+int getPadding(uint32_t imageWidth, uint16_t bitsPerPixel) {
+    int rowBits = imageWidth * bitsPerPixel;
+    int rowBytes = rowBits / 8;
+    if (rowBits % 8 != 0) {
+        ++rowBytes;
+    }
+    return 4 - (rowBytes % 4);
+}
+
 void writeHeaders(std::ofstream& file, uint32_t imageWidth,
         uint32_t imageHeight, uint16_t bitsPerPixel, int colorTableEntries) {
 
+    int paddingBytes, rowBits, rowBytes;
     // Determine padding
-    int paddingBytes = ((imageWidth * bitsPerPixel) / 8) % 4;
+    paddingBytes = getPadding(imageWidth, bitsPerPixel);
+    // Determine Bytes needed per row (with padding)
+    rowBits = imageWidth * bitsPerPixel;
+    rowBytes = rowBits / 8;
+    // Leftover bits need a byte
+    if (rowBits % 8 != 0) {
+        ++rowBytes;
+    }
+    // Add padding
+    rowBytes += paddingBytes;
 
     // Setup headers
     DIBHeader dhead;
@@ -28,7 +47,7 @@ void writeHeaders(std::ofstream& file, uint32_t imageWidth,
     dhead.imageWidth = imageWidth;
     dhead.imageHeight = imageHeight;
     dhead.bitsPerPixel = bitsPerPixel;
-    dhead.imageSize = ((imageWidth + paddingBytes) * imageHeight * bitsPerPixel) / 8;
+    dhead.imageSize = rowBytes * imageHeight;
 
     FileHeader fhead;
     fhead.imageDataOffset = 54 + (colorTableEntries * 4);
@@ -52,7 +71,7 @@ bool writeBitmap24(std::string fname, const std::vector<std::vector<Color24>>& d
         return false;
     }
     // Determine padding
-    int paddingBytes = (imageWidth * 3) % 4;
+    int paddingBytes = getPadding(imageWidth, 24);
 
     // Write to file
     std::ofstream file;
@@ -80,12 +99,15 @@ bool writeBitmapBW(std::string fname, const std::vector<std::vector<bool>>& data
     // Get sizes
     unsigned int imageHeight = data.size();
     unsigned int imageWidth = data[0].size();
+    std::cout << "Width: " << imageWidth << "\n";
+    std::cout << "Height: " << imageHeight << "\n";
     // make sure input contains vectors of same length
     if (!validateSize(imageWidth, data)) {
         return false;
     }
 
-    int paddingBytes = (imageWidth / 8) % 4;
+    int paddingBytes = getPadding(imageWidth, 1);
+    std::cout << "Padding: " << paddingBytes << "\n";
 
     // Write to file
     std::ofstream file;
@@ -115,6 +137,11 @@ bool writeBitmapBW(std::string fname, const std::vector<std::vector<bool>>& data
                 toWrite = 0;
                 bitPos = 0;
             }
+        }
+        // If bits left to be written
+        if (bitPos != 0) {
+            file << toWrite;
+            ++bytesWritten;
         }
         // Write padding
         for (int i = 0; i < paddingBytes; ++i) {
