@@ -4,6 +4,6 @@
 #include <vector>
 #include "grid.hpp"
 
-std::vector<std::vector<bool>> graphToImage(GridGraph& graph);
+std::vector<std::vector<bool>> graphToImage(const GridGraph& graph);
 
 #endif
