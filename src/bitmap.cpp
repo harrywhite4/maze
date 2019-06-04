@@ -128,7 +128,7 @@ bool writeBitmapBW(std::string fname, const std::vector<std::vector<bool>>& data
         for (bool on : row) {
             if (on) { 
                 // Set bit at bitPos in toWrite to 1
-                toWrite |= (0x01 << bitPos);
+                toWrite |= (0x01 << (7 - bitPos));
             }
             ++bitPos;
             if (bitPos == 8) {
