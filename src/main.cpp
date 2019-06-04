@@ -45,8 +45,13 @@ int main(int argc, char *argv[]) {
     // Build data
     GridGraph graph(3, 3);
     graph.addEdge(0, Right);
+    graph.addEdge(0, Down);
+    graph.addEdge(1, Right);
     graph.addEdge(3, Right);
+    graph.addEdge(4, Right);
+    graph.addEdge(5, Down);
     graph.addEdge(6, Right);
+    graph.addEdge(7, Right);
     auto image = graphToImage(graph);
     success = writeBitmapBW(fname, image);
 
