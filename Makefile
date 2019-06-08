@@ -1,6 +1,7 @@
 CXX ?= g++
-CXXFLAGS = -std=c++17 -Wall -Wpedantic -Werror
+CXXFLAGS ?= -std=c++17 -Wall -Wpedantic -Werror
 MKDIR = mkdir -p
+LINTER ?= cpplint
 BINNAME = maze
 SRCDIR = src
 BUILDDIR = build
@@ -30,6 +31,10 @@ $(BUILDDIR):
 # after first compilation will be joined with generated deps rules
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp | $(BUILDDIR)
 	$(CXX) $(CXXFLAGS) -MP -MMD -c $< -o $@
+
+.PHONY: lint
+lint:
+	$(LINTER) --recursive ./src
 
 .PHONY: clean
 clean:
