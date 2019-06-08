@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <optional>
+#include <random>
 
 enum Direction: unsigned int {Left = 0, Right, Up, Down};
 
@@ -10,8 +11,12 @@ class GridGraph {
     unsigned int numRows;
     unsigned int numColumns;
 
+    // Used to store edge information
     std::vector<bool> rightEdges;
     std::vector<bool> downEdges;
+
+    // Used to store possible dirs when adding random edge
+    std::vector<Direction> possibleDirs;
 
     // Set edge from node in direction to value, return whether successful
     bool setEdge(unsigned int node, Direction dir, bool value);
@@ -47,7 +52,7 @@ class GridGraph {
     bool addEdge(unsigned int node, Direction dir);
 
     // Add a random edge
-    std::optional<Direction> addRandomEdge(unsigned int node);
+    std::optional<Direction> addRandomEdge(unsigned int node, std::mt19937& gen);
 
     // Remove an edge from node in this direction, return whether edge was removed
     bool removeEdge(unsigned int node, Direction dir);

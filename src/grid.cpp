@@ -1,5 +1,6 @@
 #include <vector>
 #include <optional>
+#include <random>
 
 #include "grid.hpp"
 
@@ -7,7 +8,8 @@ GridGraph::GridGraph(unsigned int numRows, unsigned int numColumns) :
     numRows(numRows),
     numColumns(numColumns),
     rightEdges(numColumns * numRows, false),
-    downEdges(numColumns * numRows, false) {
+    downEdges(numColumns * numRows, false),
+    possibleDirs(4) {
 }
 
 bool GridGraph::validNode(unsigned int node) const {
@@ -115,4 +117,40 @@ bool GridGraph::addEdge(unsigned int node, Direction dir) {
 
 bool GridGraph::removeEdge(unsigned int node, Direction dir) {
     return setEdge(node, dir, false);
+}
+
+std::optional<Direction> GridGraph::addRandomEdge(unsigned int node, std::mt19937& gen) {
+    // clear possible dirs
+    possibleDirs.clear();
+    // Get possible directions
+    auto row = rowNumber(node);
+    auto column = columnNumber(node);
+    Direction dir;
+    if (column > 0 && !hasEdge(node, Left)) {
+        possibleDirs.push_back(Left);
+    }
+    if (column < numColumns-1 && !hasEdge(node, Right)) {
+        possibleDirs.push_back(Right);
+    }
+    if (row > 0 && !hasEdge(node, Up)) {
+        possibleDirs.push_back(Up);
+    }
+    if (row < numRows-1 && !hasEdge(node, Down)) {
+        possibleDirs.push_back(Down);
+    }
+    if (!possibleDirs.empty()) {
+        auto size = possibleDirs.size();
+        dir = possibleDirs[0];
+        // Choose random if there are more than 1
+        if (size > 1) {
+            std::uniform_int_distribution<> dis(0, possibleDirs.size()-1);
+            auto index = dis(gen);
+            dir = possibleDirs[index];
+        }
+        bool success = addEdge(node, dir);
+        if (success) {
+            return dir;
+        }
+    }
+    return {};
 }
