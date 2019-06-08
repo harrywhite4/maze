@@ -1,4 +1,5 @@
 #include <vector>
+#include <optional>
 
 #include "grid.hpp"
 
@@ -33,29 +34,29 @@ unsigned int GridGraph::columnNumber(unsigned int node) const {
     return node % numColumns;
 }
 
-OptionalNode GridGraph::nodeInDirection(unsigned int start, Direction dir) const {
+std::optional<unsigned int> GridGraph::nodeInDirection(unsigned int start, Direction dir) const {
     if (validNode(start)) {
         unsigned int rowNum = rowNumber(start);
         switch(dir) {
             case Left:
                 if (validNode(start-1)) {
-                    return {true, start-1};
+                    return start-1;
                 }
             case Right:
                 if (validNode(start+1)) {
-                    return {true, start+1};
+                    return start+1;
                 }
             case Up:
                 if (rowNum-1 >= 0) {
-                    return {true, (rowNum-1) + columnNumber(start)};
+                    return (rowNum-1) + columnNumber(start);
                 }
             case Down:
                 if (rowNum+1 < numRows) {
-                    return {true, (rowNum+1) + columnNumber(start)};
+                    return (rowNum+1) + columnNumber(start);
                 }
         }
     }
-    return {false, 0};
+    return {};
 }
 
 bool GridGraph::hasEdge(unsigned int node, Direction dir) const {

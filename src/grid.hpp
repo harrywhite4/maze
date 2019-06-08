@@ -2,13 +2,9 @@
 #define MAZE_GRID_H_
 
 #include <vector>
+#include <optional>
 
-enum Direction {Left, Right, Up, Down};
-
-struct OptionalNode {
-    bool valid;
-    unsigned int node;
-};
+enum Direction: unsigned int {Left = 0, Right, Up, Down};
 
 class GridGraph {
     
@@ -44,13 +40,16 @@ class GridGraph {
     unsigned int getNumColumns() const;
 
     // Get the node in direction dir from start if valid
-    OptionalNode nodeInDirection(unsigned int start, Direction dir) const;
+    std::optional<unsigned int> nodeInDirection(unsigned int start, Direction dir) const;
 
     // Whether edge in this direction from node exists
     bool hasEdge(unsigned int node, Direction dir) const;
 
     // Add an edge from node in this direction, return whether edge was added
     bool addEdge(unsigned int node, Direction dir);
+
+    // Add a random edge
+    std::optional<Direction> addRandomEdge(unsigned int node);
 
     // Remove an edge from node in this direction, return whether edge was removed
     bool removeEdge(unsigned int node, Direction dir);
