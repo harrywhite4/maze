@@ -3,8 +3,8 @@
 
 #include "grid.hpp"
 
-GridGraph::GridGraph(unsigned int numRows, unsigned int numColumns) : 
-    numRows(numRows), 
+GridGraph::GridGraph(unsigned int numRows, unsigned int numColumns) :
+    numRows(numRows),
     numColumns(numColumns),
     rightEdges(numColumns * numRows, false),
     downEdges(numColumns * numRows, false) {
@@ -37,7 +37,7 @@ unsigned int GridGraph::columnNumber(unsigned int node) const {
 std::optional<unsigned int> GridGraph::nodeInDirection(unsigned int start, Direction dir) const {
     if (validNode(start)) {
         unsigned int rowNum = rowNumber(start);
-        switch(dir) {
+        switch (dir) {
             case Left:
                 if (validNode(start-1)) {
                     return start-1;
@@ -64,7 +64,7 @@ bool GridGraph::hasEdge(unsigned int node, Direction dir) const {
         return false;
     }
 
-    switch(dir) {
+    switch (dir) {
     case Right:
         return rightEdges[node];
     case Left:
@@ -87,7 +87,7 @@ bool GridGraph::setEdge(unsigned int node, Direction dir, bool value) {
         return false;
     }
 
-    switch(dir) {
+    switch (dir) {
     case Right:
         rightEdges[node] = value;
         return true;

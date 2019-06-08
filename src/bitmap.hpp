@@ -1,5 +1,5 @@
-#ifndef MAZE_BITMAP_H_
-#define MAZE_BITMAP_H_
+#ifndef BITMAP_HPP_
+#define BITMAP_HPP_
 
 #include <string>
 #include <vector>
@@ -47,4 +47,4 @@ bool writeBitmap24(std::string, const std::vector<std::vector<Color24>>&);
 // write black and white bitmap function
 bool writeBitmapBW(std::string, const std::vector<std::vector<bool>>&);
 
-#endif
+#endif  // BITMAP_HPP_

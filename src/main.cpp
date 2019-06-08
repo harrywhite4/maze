@@ -6,7 +6,7 @@
 #include "grid.hpp"
 #include "maze.hpp"
 
-const std::string usage = "Usage: bitmap [options] fname\nOptions:\n"
+const char usage[] = "Usage: bitmap [options] fname\nOptions:\n"
                           "--help Print help\n";
 
 int main(int argc, char *argv[]) {

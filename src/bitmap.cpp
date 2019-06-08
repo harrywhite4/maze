@@ -27,7 +27,6 @@ int getPadding(uint32_t imageWidth, uint16_t bitsPerPixel) {
 
 void writeHeaders(std::ofstream& file, uint32_t imageWidth,
         uint32_t imageHeight, uint16_t bitsPerPixel, int colorTableEntries) {
-
     int paddingBytes, rowBits, rowBytes;
     // Determine padding
     paddingBytes = getPadding(imageWidth, bitsPerPixel);
@@ -58,7 +57,6 @@ void writeHeaders(std::ofstream& file, uint32_t imageWidth,
     file.write((char*)&fhead, sizeof(FileHeader));
     file.write((char*)&dhead, sizeof(DIBHeader));
 }
-    
 
 
 // Write 24 bit color data to bitmap file (adding padding if neccesary)
@@ -126,7 +124,7 @@ bool writeBitmapBW(std::string fname, const std::vector<std::vector<bool>>& data
         toWrite = 0;
         bitPos = 0;
         for (bool on : row) {
-            if (on) { 
+            if (on) {
                 // Set bit at bitPos in toWrite to 1
                 toWrite |= (0x01 << (7 - bitPos));
             }

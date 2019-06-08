@@ -1,5 +1,5 @@
-#ifndef MAZE_GRID_H_
-#define MAZE_GRID_H_
+#ifndef GRID_HPP_
+#define GRID_HPP_
 
 #include <vector>
 #include <optional>
@@ -7,7 +7,6 @@
 enum Direction: unsigned int {Left = 0, Right, Up, Down};
 
 class GridGraph {
-    
     unsigned int numRows;
     unsigned int numColumns;
 
@@ -18,7 +17,6 @@ class GridGraph {
     bool setEdge(unsigned int node, Direction dir, bool value);
 
     public:
-
     GridGraph(unsigned int numRows, unsigned int rowWidth);
 
     // Whether node number is valid
@@ -32,7 +30,7 @@ class GridGraph {
 
     // Number of nodes in the graph
     unsigned int getNumNodes() const;
-    
+
     // Number of rows in the graph
     unsigned int getNumRows() const;
 
@@ -53,7 +51,6 @@ class GridGraph {
 
     // Remove an edge from node in this direction, return whether edge was removed
     bool removeEdge(unsigned int node, Direction dir);
-
 };
 
-#endif
+#endif  // GRID_HPP_
