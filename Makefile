@@ -29,7 +29,7 @@ $(BUILDDIR):
 # Object files
 # after first compilation will be joined with generated deps rules
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp | $(BUILDDIR)
-	$(CXX) $(CPPFLAGS) -MP -MMD -c $< -o $@
+	$(CXX) $(CXXFLAGS) -MP -MMD -c $< -o $@
 
 .PHONY: clean
 clean:
