@@ -44,19 +44,7 @@ int main(int argc, char *argv[]) {
     std::string fname = posArgs[0];
 
     // Build data
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    GridGraph graph(3, 3);
-    graph.addRandomEdge(0, gen);
-    graph.addRandomEdge(4, gen);
-    /* graph.addEdge(0, Right); */
-    /* graph.addEdge(0, Down); */
-    /* graph.addEdge(1, Right); */
-    /* graph.addEdge(3, Right); */
-    /* graph.addEdge(4, Right); */
-    /* graph.addEdge(5, Down); */
-    /* graph.addEdge(6, Right); */
-    /* graph.addEdge(7, Right); */
+    GridGraph graph = lerwGraph(5, 5);
     auto image = graphToImage(graph);
     success = writeBitmapBW(fname, image);
 

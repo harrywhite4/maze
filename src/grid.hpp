@@ -4,6 +4,7 @@
 #include <vector>
 #include <optional>
 #include <random>
+#include <unordered_set>
 
 enum Direction: unsigned int {Left = 0, Right, Up, Down};
 
@@ -21,7 +22,20 @@ class GridGraph {
     // Set edge from node in direction to value, return whether successful
     bool setEdge(unsigned int node, Direction dir, bool value);
 
-    public:
+    bool directionIsExcluded(unsigned int node, Direction dir,
+                             const std::unordered_set<unsigned int>& exclusions);
+
+    // Set possible dirs
+    void setPossibleDirs(unsigned int node);
+
+    // Exclude direction leading to node in excluded set
+    void setPossibleDirsExclusions(unsigned int node,
+                                   const std::unordered_set<unsigned int>& exclusions);
+
+    // Add edge in random direction from possibleDirs
+    std::optional<Direction> addRandomDirection(unsigned int node, std::mt19937& gen);
+
+ public:
     GridGraph(unsigned int numRows, unsigned int rowWidth);
 
     // Whether node number is valid
@@ -39,7 +53,7 @@ class GridGraph {
     // Number of rows in the graph
     unsigned int getNumRows() const;
 
-    // Number of nodes in the graph
+    // Number of columns in the graph
     unsigned int getNumColumns() const;
 
     // Get the node in direction dir from start if valid
@@ -53,6 +67,10 @@ class GridGraph {
 
     // Add a random edge
     std::optional<Direction> addRandomEdge(unsigned int node, std::mt19937& gen);
+
+    // Add a random edge ignoring nodes in exclusions
+    std::optional<Direction> addRandomEdgeWithExclusions(unsigned int node,
+                         std::mt19937& gen, const std::unordered_set<unsigned int>& exclusions);
 
     // Remove an edge from node in this direction, return whether edge was removed
     bool removeEdge(unsigned int node, Direction dir);
