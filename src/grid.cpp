@@ -86,9 +86,9 @@ bool GridGraph::hasEdge(unsigned int node, Direction dir) const {
         return downEdges[node];
         break;
     case Up:
-        int rowAbove = rowNumber(node) - 1;
-        if (rowAbove >= 0) {
-            return downEdges[rowAbove + columnNum];
+        int rowNum = rowNumber(node);
+        if (rowNum > 0) {
+            return downEdges[((rowNum-1)*numColumns) + columnNum];
         }
         break;
     }
@@ -117,9 +117,9 @@ bool GridGraph::setEdge(unsigned int node, Direction dir, bool value) {
         return true;
         break;
     case Up:
-        int rowAbove = rowNumber(node) - 1;
-        if (rowAbove >= 0) {
-            downEdges[rowAbove + columnNum] = value;
+        int rowNum = rowNumber(node);
+        if (rowNum > 0) {
+            downEdges[((rowNum-1)*numColumns) + columnNum] = value;
             return true;
         }
         break;
