@@ -3,18 +3,28 @@ CXX ?= g++
 CXXFLAGS ?= -std=c++17 -Wall -Wpedantic -Werror
 MKDIR = mkdir -p
 LINTER ?= cpplint
+MAIN_FNAME = main.cpp
 BINNAME = maze
+
 SRCDIR = src
 BUILDDIR = build
 BINDIR = bin
 
 GTEST_DIR ?= /usr/src/googletest/googletest
+TEST_INCLUDES=-I$(SRCDIR) -isystem ${GTEST_DIR}/include -pthread
 TESTDIR = test
 
 BINPATH = $(BINDIR)/$(BINNAME)
 SOURCES = $(wildcard $(SRCDIR)/*.cpp)
 OBJECTS = $(SOURCES:$(SRCDIR)/%.cpp=$(BUILDDIR)/%.o)
 DEPS = $(SOURCES:$(SRCDIR)/%.cpp=$(BUILDDIR)/%.d)
+
+MAIN_OBJECT = $(BUILDDIR)/$(MAIN_FNAME:%.cpp=%.o)
+NON_MAIN_OBJECTS = $(filter-out $(MAIN_OBJECT), $(OBJECTS))
+
+TEST_SOURCES = $(wildcard $(TESTDIR)/*.cpp)
+TEST_OBJECTS = $(TEST_SOURCES:$(TESTDIR)/%.cpp=$(BUILDDIR)/%.o)
+TEST_DEPS = $(TEST_SOURCES:$(TESTDIR)/%.cpp=$(BUILDDIR)/%.d)
 
 # ---------- Main build ----------
 
@@ -48,8 +58,15 @@ $(BUILDDIR)/gtest-all.o: | $(BUILDDIR)
 $(BUILDDIR)/libgtest.a: $(BUILDDIR)/gtest-all.o
 	ar -rv $@ $<
 
-$(BINDIR)/test: $(TESTDIR)/test.cpp $(BUILDDIR)/libgtest.a $(BUILDDIR)/grid.o
-	$(CXX) $(CXXFLAGS) -I$(SRCDIR) -pthread $^ -o $@
+-include $(TEST_DEPS)
+
+# Test objects
+$(BUILDDIR)/%.o: $(TESTDIR)/%.cpp | $(BUILDDIR)
+	$(CXX) $(CXXFLAGS) $(TEST_INCLUDES) -MP -MMD -c $< -o $@
+
+
+$(BINDIR)/test: $(TEST_OBJECTS) $(BUILDDIR)/libgtest.a $(NON_MAIN_OBJECTS)
+	$(CXX) $(CXXFLAGS) $(TEST_INCLUDES) $^ -o $@
 
 # ---------- Phony ----------
 
