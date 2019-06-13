@@ -12,6 +12,7 @@ BINDIR = bin
 
 GTEST_DIR ?= /usr/src/googletest/googletest
 TEST_INCLUDES=-I$(SRCDIR) -isystem ${GTEST_DIR}/include -pthread
+TEST_BUILDDIR = $(BUILDDIR)/test
 TESTDIR = test
 
 BINPATH = $(BINDIR)/$(BINNAME)
@@ -23,8 +24,8 @@ MAIN_OBJECT = $(BUILDDIR)/$(MAIN_FNAME:%.cpp=%.o)
 NON_MAIN_OBJECTS = $(filter-out $(MAIN_OBJECT), $(OBJECTS))
 
 TEST_SOURCES = $(wildcard $(TESTDIR)/*.cpp)
-TEST_OBJECTS = $(TEST_SOURCES:$(TESTDIR)/%.cpp=$(BUILDDIR)/%.o)
-TEST_DEPS = $(TEST_SOURCES:$(TESTDIR)/%.cpp=$(BUILDDIR)/%.d)
+TEST_OBJECTS = $(TEST_SOURCES:$(TESTDIR)/%.cpp=$(TEST_BUILDDIR)/%.o)
+TEST_DEPS = $(TEST_SOURCES:$(TESTDIR)/%.cpp=$(TEST_BUILDDIR)/%.d)
 
 # ---------- Main build ----------
 
@@ -34,11 +35,11 @@ $(BINPATH): $(OBJECTS) | $(BINDIR)
 
 # Create bin dir
 $(BINDIR):
-	$(MKDIR) $(BINDIR)
+	$(MKDIR) $@
 
 # Create build dir
 $(BUILDDIR):
-	$(MKDIR) $(BUILDDIR)
+	$(MKDIR) $@
 
 # Include generated deps rules
 -include $(DEPS)
@@ -50,22 +51,25 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp | $(BUILDDIR)
 
 # ---------- Testing ----------
 
+$(TEST_BUILDDIR):
+	$(MKDIR) $@
+
 # Gtest object
-$(BUILDDIR)/gtest-all.o: | $(BUILDDIR)
+$(TEST_BUILDDIR)/gtest-all.o: | $(TEST_BUILDDIR)
 	$(CXX) -std=c++11 -isystem $(GTEST_DIR)/include -I$(GTEST_DIR) -pthread -c $(GTEST_DIR)/src/gtest-all.cc -o $@
 
 # Gtest archive
-$(BUILDDIR)/libgtest.a: $(BUILDDIR)/gtest-all.o
+$(TEST_BUILDDIR)/libgtest.a: $(TEST_BUILDDIR)/gtest-all.o
 	ar -rv $@ $<
 
 -include $(TEST_DEPS)
 
 # Test objects
-$(BUILDDIR)/%.o: $(TESTDIR)/%.cpp | $(BUILDDIR)
+$(TEST_BUILDDIR)/%.o: $(TESTDIR)/%.cpp | $(TEST_BUILDDIR)
 	$(CXX) $(CXXFLAGS) $(TEST_INCLUDES) -MP -MMD -c $< -o $@
 
 
-$(BINDIR)/test: $(TEST_OBJECTS) $(BUILDDIR)/libgtest.a $(NON_MAIN_OBJECTS)
+$(BINDIR)/test: $(TEST_OBJECTS) $(TEST_BUILDDIR)/libgtest.a $(NON_MAIN_OBJECTS)
 	$(CXX) $(CXXFLAGS) $(TEST_INCLUDES) $^ -o $@
 
 # ---------- Phony ----------
