@@ -2,6 +2,7 @@
 #include <unordered_set>
 #include <vector>
 #include <iostream>
+#include <deque>
 
 #include "maze.hpp"
 #include "grid.hpp"
@@ -28,57 +29,92 @@ std::vector<std::vector<bool>> graphToImage(const GridGraph& graph) {
     return image;
 }
 
-GridGraph lerwGraph(int numRows, int numColumns) {
+std::optional<unsigned int> getNewNode(unsigned int numNodes,
+        std::unordered_set<unsigned int> exclusions) {
+    // TODO more efficient newNode
+    // Get next node not in maze if there is one
+    for (unsigned int n = 0; n < numNodes; ++n) {
+        if (exclusions.count(n) == 0) {
+            return n;
+        }
+    }
+    return {};
+}
+
+void eraseLoop(GridGraph& graph, unsigned int loopNode,
+        std::deque<Edge>& history, std::unordered_set<unsigned int>& sectionNodes) {
+    // Remove edges until we reach the the node
+    Edge lastEdge;
+    while (!history.empty()) {
+        lastEdge = history.back();
+        history.pop_back();
+        graph.removeEdge(lastEdge.node, lastEdge.dir);
+        if (sectionNodes.count(lastEdge.node) > 0) {
+            sectionNodes.erase(lastEdge.node);
+        } else {
+            std::cerr << "Node in history was not in section\n";
+        }
+        if (lastEdge.node == loopNode) {
+            break;
+        }
+    }
+}
+
+
+void lerwGraph(GridGraph& graph) {
     // Setup random number generator
     std::random_device rd;
     std::mt19937 gen(rd());
+    // Variables
+    unsigned int currentNode = 0;
+    unsigned int numNodes = graph.getNumNodes();
+    std::optional<unsigned int> nextNode, newNode;
+    std::optional<Direction> dir;
     // Setup data structures
-    GridGraph graph = GridGraph(numRows, numColumns);
     std::unordered_set<unsigned int> inMaze;
     std::unordered_set<unsigned int> inSection;
-    // Variables
-    bool newNode = false;
-    unsigned int currentNode = 0;
-    std::optional<unsigned int> nextNode;
-    std::optional<Direction> dir;
+    std::vector<Direction> possibleDirs;
+    // TODO remove duplicate node stoarage for histroy & inSection
+    std::deque<Edge> history;
 
-    inSection.insert(currentNode);
-    auto numNodes = graph.getNumNodes();
+    // Add starting maze node
+    inMaze.insert(currentNode);
+
     // While there are still edges to add
     while (inMaze.size() < numNodes) {
         // If starting again
         if (inSection.empty()) {
-            newNode = false;
-            // Get next node not in maze if there is one
-            for (unsigned int n = 0; n < numNodes; ++n) {
-                if (inMaze.count(n) == 0) {
-                    currentNode = n;
-                    newNode = true;
-                }
-            }
-            if (newNode) {
+            newNode = getNewNode(numNodes, inMaze);
+            if (newNode.has_value()) {
+                currentNode = newNode.value();
                 inSection.insert(currentNode);
             } else {
-                std::cout << "Could not reset\n";
+                std::cerr << "Could not reset\n";
                 break;
             }
         }
 
         // add random edge
-        dir = graph.addRandomEdgeWithExclusions(currentNode, gen, inSection);
+        graph.getPossibleDirs(possibleDirs, currentNode);
+        dir = graph.addRandomEdge(possibleDirs, currentNode, gen);
         if (dir.has_value()) {
+            // Add to history
+            history.push_back(Edge{currentNode, dir.value()});
             // Get node new edge goes to
             nextNode = graph.nodeInDirection(currentNode, dir.value());
             if (nextNode.has_value()) {
                 // If node was already in section (we have a loop)
                 if (inSection.count(nextNode.value()) > 0) {
-                    std::cout << "We looped!\n";
-                    break;
+                    // Erase loop
+                    eraseLoop(graph, nextNode.value(), history, inSection);
+                    currentNode = nextNode.value();
+                    // Add node back to section
+                    inSection.insert(currentNode);
+                    continue;
                 }
+                // If node was already in maze
                 if (inMaze.count(nextNode.value()) > 0) {
-                    // If node was already in maze
                     // Start new section
-                    std::cout << "Starting new section\n";
                     inMaze.merge(inSection);
                     inMaze.insert(nextNode.value());
                     inSection.clear();
@@ -88,15 +124,13 @@ GridGraph lerwGraph(int numRows, int numColumns) {
                     currentNode = nextNode.value();
                 }
             } else {
-                std::cout << "Could not get next node!\n";
+                std::cerr << "Could not get next node!\n";
                 break;
             }
         } else {
             // If can't add edge from currentNode
-            std::cout << "Could not move from " << currentNode << " islen " << inSection.size() << "\n";
-            inMaze.merge(inSection);
-            inSection.clear();
+            std::cerr << "Could not move from " << currentNode << " islen " << inSection.size() << "\n";
+            break;
         }
     }
-    return graph;
 }

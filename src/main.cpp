@@ -44,7 +44,8 @@ int main(int argc, char *argv[]) {
     std::string fname = posArgs[0];
 
     // Build data
-    GridGraph graph = lerwGraph(5, 5);
+    auto graph = GridGraph(50, 50);
+    lerwGraph(graph);
     auto image = graphToImage(graph);
     success = writeBitmapBW(fname, image);
 
