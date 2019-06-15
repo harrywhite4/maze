@@ -9,8 +9,7 @@ GridGraph::GridGraph(unsigned int numRows, unsigned int numColumns) :
     numRows(numRows),
     numColumns(numColumns),
     rightEdges(numColumns * numRows, false),
-    downEdges(numColumns * numRows, false),
-    possibleDirs(4) {
+    downEdges(numColumns * numRows, false) {
 }
 
 bool GridGraph::validNode(unsigned int node) const {
@@ -135,7 +134,7 @@ bool GridGraph::removeEdge(unsigned int node, Direction dir) {
     return setEdge(node, dir, false);
 }
 
-void GridGraph::setPossibleDirs(unsigned int node) {
+void GridGraph::getPossibleDirs(std::vector<Direction>& possibleDirs, unsigned int node) {
     possibleDirs.clear();
     auto row = rowNumber(node);
     auto column = columnNumber(node);
@@ -153,39 +152,8 @@ void GridGraph::setPossibleDirs(unsigned int node) {
     }
 }
 
-bool GridGraph::directionIsExcluded(unsigned int node, Direction dir,
-                         const std::unordered_set<unsigned int>& exclusions) {
-        auto onode = nodeInDirection(node, dir);
-        // If not valid direction
-        if (!onode.has_value()) {
-            return true;
-        }
-        // std::cout << dir << " is valid for " << node << "\n";
-        // If there is a node in that direction that is excluded
-        if (exclusions.count(onode.value()) > 0) {
-            return true;
-        }
-        return false;
-}
-
-void GridGraph::setPossibleDirsExclusions(unsigned int node,
-                         const std::unordered_set<unsigned int>& exclusions) {
-    possibleDirs.clear();
-    if (!directionIsExcluded(node, Left, exclusions) && !hasEdge(node, Left)) {
-        possibleDirs.push_back(Left);
-    }
-    if (!directionIsExcluded(node, Right, exclusions) && !hasEdge(node, Right)) {
-        possibleDirs.push_back(Right);
-    }
-    if (!directionIsExcluded(node, Up, exclusions) && !hasEdge(node, Up)) {
-        possibleDirs.push_back(Up);
-    }
-    if (!directionIsExcluded(node, Down, exclusions) && !hasEdge(node, Down)) {
-        possibleDirs.push_back(Down);
-    }
-}
-
-std::optional<Direction> GridGraph::addRandomDirection(unsigned int node, std::mt19937& gen) {
+std::optional<Direction> GridGraph::addRandomEdge(const std::vector<Direction>& possibleDirs,
+                                                        unsigned int node, std::mt19937& gen) {
     if (!possibleDirs.empty()) {
         auto size = possibleDirs.size();
         auto dir = possibleDirs[0];
@@ -202,19 +170,4 @@ std::optional<Direction> GridGraph::addRandomDirection(unsigned int node, std::m
         }
     }
     return {};
-}
-
-std::optional<Direction> GridGraph::addRandomEdge(unsigned int node, std::mt19937& gen) {
-    setPossibleDirs(node);
-    return addRandomDirection(node, gen);
-}
-
-std::optional<Direction> GridGraph::addRandomEdgeWithExclusions(unsigned int node,
-                     std::mt19937& gen, const std::unordered_set<unsigned int>& exclusions) {
-    setPossibleDirsExclusions(node, exclusions);
-    auto dir = addRandomDirection(node, gen);
-    if (dir.has_value()) {
-        std::cout << "added edge in dir " << dir.value() << " from " << node << "\n";
-    }
-    return dir;
 }

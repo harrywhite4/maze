@@ -8,6 +8,11 @@
 
 enum Direction: unsigned int {Left = 0, Right, Up, Down};
 
+struct Edge {
+    unsigned int node;
+    Direction dir;
+};
+
 class GridGraph {
     unsigned int numRows;
     unsigned int numColumns;
@@ -16,24 +21,8 @@ class GridGraph {
     std::vector<bool> rightEdges;
     std::vector<bool> downEdges;
 
-    // Used to store possible dirs when adding random edge
-    std::vector<Direction> possibleDirs;
-
     // Set edge from node in direction to value, return whether successful
     bool setEdge(unsigned int node, Direction dir, bool value);
-
-    bool directionIsExcluded(unsigned int node, Direction dir,
-                             const std::unordered_set<unsigned int>& exclusions);
-
-    // Set possible dirs
-    void setPossibleDirs(unsigned int node);
-
-    // Exclude direction leading to node in excluded set
-    void setPossibleDirsExclusions(unsigned int node,
-                                   const std::unordered_set<unsigned int>& exclusions);
-
-    // Add edge in random direction from possibleDirs
-    std::optional<Direction> addRandomDirection(unsigned int node, std::mt19937& gen);
 
  public:
     GridGraph(unsigned int numRows, unsigned int rowWidth);
@@ -65,15 +54,14 @@ class GridGraph {
     // Add an edge from node in this direction, return whether edge was added
     bool addEdge(unsigned int node, Direction dir);
 
-    // Add a random edge
-    std::optional<Direction> addRandomEdge(unsigned int node, std::mt19937& gen);
-
-    // Add a random edge ignoring nodes in exclusions
-    std::optional<Direction> addRandomEdgeWithExclusions(unsigned int node,
-                         std::mt19937& gen, const std::unordered_set<unsigned int>& exclusions);
-
     // Remove an edge from node in this direction, return whether edge was removed
     bool removeEdge(unsigned int node, Direction dir);
+
+    // Get possible dirs
+    void getPossibleDirs(std::vector<Direction>& dirs, unsigned int node);
+
+    // Add a random edge in direction
+    std::optional<Direction> addRandomEdge(const std::vector<Direction>& dirs, unsigned int node, std::mt19937& gen);
 };
 
 #endif  // GRID_HPP_
