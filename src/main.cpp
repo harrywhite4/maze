@@ -6,45 +6,43 @@
 #include "bitmap.hpp"
 #include "grid.hpp"
 #include "maze.hpp"
+#include "argparse.hpp"
 
-const char usage[] = "Usage: bitmap [options] fname\nOptions:\n"
-                          "--help Print help\n";
+const char usage[] = "Usage: maze [options]\nOptions:\n"
+                      "-o Output filename (default: \"maze.bmp\")\n"
+                      "-w Maze width (default: 50)\n"
+                      "-h Maze height (default: 50)\n"
+                      "--help Print help\n";
 
 int main(int argc, char *argv[]) {
     // Variables
-    bool success;
+    bool parseSuccess;
+    std::string fname;
+    unsigned int width, height;
     // Argument parsing
-    std::vector<std::string> posArgs, flagArgs;
-    std::string current;
-    for (int i = 1; i < argc; ++i) {
-        current = argv[i];
-        if (current[0] == '-') {
-            flagArgs.push_back(current);
-        } else {
-            posArgs.push_back(current);
-        }
-    }
+    auto parser = ArgumentParser();
+    parser.addFlagArg("--help", false);
+    parser.addParamArg("-o", "maze.bmp");
+    parser.addParamArg("-w", "50");
+    parser.addParamArg("-h", "50");
+    parseSuccess = parser.parse(argc, argv);
 
-    // Set based on flagArgs
-    for (auto flag : flagArgs) {
-        if (flag == "--help") {
-            std::cout << usage;
-            exit(EXIT_SUCCESS);
-        } else {
-            std::cerr << "Invalid argument " << flag << "\n" << usage;
-            exit(EXIT_FAILURE);
-        }
-    }
-
-    // Set based on posArgs
-    if (posArgs.size() != 1) {
-        std::cerr << "Filename positional argument required\n" << usage;
+    if (!parseSuccess) {
+        std::cout << usage;
         exit(EXIT_FAILURE);
     }
-    std::string fname = posArgs[0];
+    if (parser.getFlag("--help")) {
+        std::cout << usage;
+        exit(EXIT_SUCCESS);
+    }
+    fname = parser.getParameter("-o");
+    // TODO Handle conversion errors
+    width = std::stoul(parser.getParameter("-w"));
+    height = std::stoul(parser.getParameter("-h"));
 
     // Build data
-    auto graph = GridGraph(50, 50);
+    bool success;
+    auto graph = GridGraph(height, width);
     lerwGraph(graph);
     auto image = graphToImage(graph);
     success = writeBitmapBW(fname, image);
