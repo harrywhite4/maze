@@ -39,7 +39,7 @@ std::optional<unsigned int> getNewNode(unsigned int numNodes,
     return {};
 }
 
-void removeFromSet(std::unordered_set<unsigned int>& from, 
+void removeFromSet(std::unordered_set<unsigned int>& from,
         const std::unordered_set<unsigned int>& removals) {
     for (auto n : removals) {
         from.erase(n);
