@@ -3,6 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <deque>
+#include <iterator>
 
 #include "maze.hpp"
 #include "grid.hpp"
@@ -30,15 +31,19 @@ std::vector<std::vector<bool>> graphToImage(const GridGraph& graph) {
 }
 
 std::optional<unsigned int> getNewNode(unsigned int numNodes,
-        std::unordered_set<unsigned int> exclusions) {
-    // TODO more efficient newNode
+        std::unordered_set<unsigned int> notInSet) {
     // Get next node not in maze if there is one
-    for (unsigned int n = 0; n < numNodes; ++n) {
-        if (exclusions.count(n) == 0) {
-            return n;
-        }
+    if (!notInSet.empty()) {
+        return *notInSet.begin();
     }
     return {};
+}
+
+void removeFromSet(std::unordered_set<unsigned int>& from, 
+        const std::unordered_set<unsigned int>& removals) {
+    for (auto n : removals) {
+        from.erase(n);
+    }
 }
 
 void eraseLoop(GridGraph& graph, unsigned int loopNode,
@@ -71,20 +76,24 @@ void lerwGraph(GridGraph& graph) {
     std::optional<unsigned int> nextNode, newNode;
     std::optional<Direction> dir;
     // Setup data structures
-    std::unordered_set<unsigned int> inMaze;
+    std::unordered_set<unsigned int> notInMaze;
     std::unordered_set<unsigned int> inSection;
     std::vector<Direction> possibleDirs;
-    // TODO remove duplicate node stoarage for histroy & inSection
+    // TODO remove duplicate node storage for histroy & inSection
     std::deque<Edge> history;
 
-    // Add starting maze node
-    inMaze.insert(currentNode);
+    // Add all to not in maze except starting node
+    for (unsigned int i = 0; i < numNodes; ++i) {
+        if (i != currentNode) {
+            notInMaze.insert(i);
+        }
+    }
 
     // While there are still edges to add
-    while (inMaze.size() < numNodes) {
+    while (!notInMaze.empty()) {
         // If starting again
         if (inSection.empty()) {
-            newNode = getNewNode(numNodes, inMaze);
+            newNode = getNewNode(numNodes, notInMaze);
             if (newNode.has_value()) {
                 currentNode = newNode.value();
                 inSection.insert(currentNode);
@@ -113,10 +122,9 @@ void lerwGraph(GridGraph& graph) {
                     continue;
                 }
                 // If node was already in maze
-                if (inMaze.count(nextNode.value()) > 0) {
+                if (notInMaze.count(nextNode.value()) == 0) {
                     // Start new section
-                    inMaze.merge(inSection);
-                    inMaze.insert(nextNode.value());
+                    removeFromSet(notInMaze, inSection);
                     inSection.clear();
                 } else {
                     // If node was not in section or maze
