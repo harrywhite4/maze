@@ -41,6 +41,13 @@ struct DIBHeader {
 // Reset packing
 #pragma pack(pop)
 
+// fill a DIB header
+void fillDIBHeader(DIBHeader& dhead, uint32_t imageWidth,
+        uint32_t imageHeight, uint16_t bitsPerPixel);
+
+// fill a file header
+void fillFileHeader(FileHeader& fhead, const DIBHeader& dhead, int colorTableEntries);
+
 // writeBitmap function
 bool writeBitmap24(std::string, const std::vector<std::vector<Color24>>&);
 

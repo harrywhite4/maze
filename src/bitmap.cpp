@@ -16,7 +16,7 @@ bool validateSize(unsigned int size, const std::vector<std::vector<T>>& vec) {
     return true;
 }
 
-int getPadding(uint32_t imageWidth, uint16_t bitsPerPixel) {
+int getPaddingBytes(uint32_t imageWidth, uint16_t bitsPerPixel) {
     int rowBits = imageWidth * bitsPerPixel;
     int rowBytes = rowBits / 8;
     if (rowBits % 8 != 0) {
@@ -25,11 +25,9 @@ int getPadding(uint32_t imageWidth, uint16_t bitsPerPixel) {
     return 4 - (rowBytes % 4);
 }
 
-void writeHeaders(std::ofstream& file, uint32_t imageWidth,
-        uint32_t imageHeight, uint16_t bitsPerPixel, int colorTableEntries) {
+void fillDIBHeader(DIBHeader& dhead, uint32_t imageWidth,
+        uint32_t imageHeight, uint16_t bitsPerPixel) {
     int paddingBytes, rowBits, rowBytes;
-    // Determine padding
-    paddingBytes = getPadding(imageWidth, bitsPerPixel);
     // Determine Bytes needed per row (with padding)
     rowBits = imageWidth * bitsPerPixel;
     rowBytes = rowBits / 8;
@@ -38,19 +36,28 @@ void writeHeaders(std::ofstream& file, uint32_t imageWidth,
         ++rowBytes;
     }
     // Add padding
+    paddingBytes = 4 - (rowBytes % 4);
     rowBytes += paddingBytes;
 
-    // Setup headers
-    DIBHeader dhead;
-
+    // Set values
     dhead.imageWidth = imageWidth;
     dhead.imageHeight = imageHeight;
     dhead.bitsPerPixel = bitsPerPixel;
     dhead.imageSize = rowBytes * imageHeight;
+}
 
-    FileHeader fhead;
+void fillFileHeader(FileHeader& fhead, const DIBHeader& dhead, int colorTableEntries) {
     fhead.imageDataOffset = 54 + (colorTableEntries * 4);
     fhead.size = dhead.imageSize + 54 + (colorTableEntries * 4);
+}
+
+void writeHeaders(std::ofstream& file, uint32_t imageWidth,
+        uint32_t imageHeight, uint16_t bitsPerPixel, int colorTableEntries) {
+    // Setup headers
+    DIBHeader dhead;
+    fillDIBHeader(dhead, imageWidth, imageHeight, bitsPerPixel);
+    FileHeader fhead;
+    fillFileHeader(fhead, dhead, colorTableEntries);
     std::cout << "Projected size: " << fhead.size << " bytes\n";
 
     // Write headers
@@ -69,7 +76,7 @@ bool writeBitmap24(std::string fname, const std::vector<std::vector<Color24>>& d
         return false;
     }
     // Determine padding
-    int paddingBytes = getPadding(imageWidth, 24);
+    int paddingBytes = getPaddingBytes(imageWidth, 24);
 
     // Write to file
     std::ofstream file;
@@ -104,7 +111,7 @@ bool writeBitmapBW(std::string fname, const std::vector<std::vector<bool>>& data
         return false;
     }
 
-    int paddingBytes = getPadding(imageWidth, 1);
+    int paddingBytes = getPaddingBytes(imageWidth, 1);
     std::cout << "Padding: " << paddingBytes << "\n";
 
     // Write to file
