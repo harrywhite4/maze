@@ -5,17 +5,6 @@
 
 #include "bitmap.hpp"
 
-
-template <typename T>
-bool validateSize(unsigned int size, const std::vector<std::vector<T>>& vec) {
-    for (auto row : vec) {
-        if (row.size() != size) {
-            return false;
-        }
-    }
-    return true;
-}
-
 int getPaddingBytes(uint32_t imageWidth, uint16_t bitsPerPixel) {
     int rowBits = imageWidth * bitsPerPixel;
     int rowBytes = rowBits / 8;
@@ -67,14 +56,11 @@ void writeHeaders(std::ofstream& file, uint32_t imageWidth,
 
 
 // Write 24 bit color data to bitmap file (adding padding if neccesary)
-bool writeBitmap24(std::string fname, const std::vector<std::vector<Color24>>& data) {
+bool writeBitmap24(std::string fname, Image<Color24>& image) {
     // Get sizes
-    unsigned int imageHeight = data.size();
-    unsigned int imageWidth = data[0].size();
-    // make sure input contains vectors of same length
-    if (!validateSize(imageWidth, data)) {
-        return false;
-    }
+    unsigned int imageHeight = image.getNumColumns();
+    unsigned int imageWidth = image.getNumRows();
+    std::vector<Color24> data = image.getData();
     // Determine padding
     int paddingBytes = getPaddingBytes(imageWidth, 24);
 
@@ -85,14 +71,15 @@ bool writeBitmap24(std::string fname, const std::vector<std::vector<Color24>>& d
     // Write Headers
     writeHeaders(file, imageWidth, imageHeight, 24, 0);
     // Write data
-    for (auto row : data) {
+    for (unsigned int i = 0; i < data.size(); ++i) {
+        auto c = data[i];
         // Write colors
-        for (auto c : row) {
-            file << c.blue << c.green << c.red;
-        }
-        // Write padding
-        for (int i = 0; i < paddingBytes; ++i) {
-            file << 0;
+        file << c.blue << c.green << c.red;
+        // Write padding if end of a row
+        if ((i + 1) % imageHeight == 0) {
+            for (int i = 0; i < paddingBytes; ++i) {
+                file << 0;
+            }
         }
     }
     // Close file
@@ -100,16 +87,13 @@ bool writeBitmap24(std::string fname, const std::vector<std::vector<Color24>>& d
     return true;
 }
 
-bool writeBitmapBW(std::string fname, const std::vector<std::vector<bool>>& data) {
+bool writeBitmapBW(std::string fname, Image<bool>& image) {
     // Get sizes
-    unsigned int imageHeight = data.size();
-    unsigned int imageWidth = data[0].size();
+    unsigned int imageHeight = image.getNumColumns();
+    unsigned int imageWidth = image.getNumRows();
+    std::vector<bool> data = image.getData();
     std::cout << "Width: " << imageWidth << "\n";
     std::cout << "Height: " << imageHeight << "\n";
-    // make sure input contains vectors of same length
-    if (!validateSize(imageWidth, data)) {
-        return false;
-    }
 
     int paddingBytes = getPaddingBytes(imageWidth, 1);
     std::cout << "Padding: " << paddingBytes << "\n";
@@ -126,31 +110,35 @@ bool writeBitmapBW(std::string fname, const std::vector<std::vector<bool>>& data
     // Write data
     uint8_t toWrite = 0;
     int bitPos = 0, bytesWritten = 0;
-    for (auto row : data) {
+    for (unsigned int i = 0; i < data.size(); ++i) {
+        bool on = data[i];
         // Write colors
-        toWrite = 0;
-        bitPos = 0;
-        for (bool on : row) {
-            if (on) {
-                // Set bit at bitPos in toWrite to 1
-                toWrite |= (0x01 << (7 - bitPos));
-            }
-            ++bitPos;
-            if (bitPos == 8) {
-                file << toWrite;
-                ++bytesWritten;
-                toWrite = 0;
-                bitPos = 0;
-            }
+        if (on) {
+            // Set bit at bitPos in toWrite to 1
+            toWrite |= (0x01 << (7 - bitPos));
         }
-        // If bits left to be written
-        if (bitPos != 0) {
+        ++bitPos;
+        if (bitPos == 8) {
             file << toWrite;
             ++bytesWritten;
+            toWrite = 0;
+            bitPos = 0;
         }
-        // Write padding
-        for (int i = 0; i < paddingBytes; ++i) {
-            file << 0;
+
+        // If end of row
+        if ((i + 1) % imageHeight == 0) {
+            // If bits left to be written
+            if (bitPos != 0) {
+                file << toWrite;
+                ++bytesWritten;
+            }
+            // Write padding
+            for (int i = 0; i < paddingBytes; ++i) {
+                file << 0;
+            }
+            // Reset
+            toWrite = 0;
+            bitPos = 0;
         }
     }
     std::cout << "Wrote " << bytesWritten << " data bytes\n";
