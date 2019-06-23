@@ -15,8 +15,10 @@ int getPaddingBytes(uint32_t imageWidth, uint16_t bitsPerPixel) {
     return 4 - (rowBytes % 4);
 }
 
-void fillDIBHeader(DIBHeader& dhead, uint32_t imageWidth,
-        uint32_t imageHeight, uint16_t bitsPerPixel) {
+DIBHeader::DIBHeader(uint32_t imageWidth, uint32_t imageHeight, uint16_t bitsPerPixel) :
+    imageWidth(imageWidth),
+    imageHeight(imageHeight),
+    bitsPerPixel(bitsPerPixel) {
     int paddingBytes, rowBits, rowBytes;
     // Determine Bytes needed per row (with padding)
     rowBits = imageWidth * bitsPerPixel;
@@ -29,25 +31,20 @@ void fillDIBHeader(DIBHeader& dhead, uint32_t imageWidth,
     paddingBytes = 4 - (rowBytes % 4);
     rowBytes += paddingBytes;
 
-    // Set values
-    dhead.imageWidth = imageWidth;
-    dhead.imageHeight = imageHeight;
-    dhead.bitsPerPixel = bitsPerPixel;
-    dhead.imageSize = rowBytes * imageHeight;
+    // Set size
+    this->imageSize = rowBytes * imageHeight;
 }
 
-void fillFileHeader(FileHeader& fhead, const DIBHeader& dhead, int colorTableEntries) {
-    fhead.imageDataOffset = 54 + (colorTableEntries * 4);
-    fhead.size = dhead.imageSize + 54 + (colorTableEntries * 4);
+FileHeader::FileHeader(uint32_t imageSize, unsigned int colorTableEntries) :
+    size(imageSize + 54 + (colorTableEntries * 4)),
+    imageDataOffset(54 + (colorTableEntries * 4)) {
 }
 
 void writeHeaders(std::ofstream& file, uint32_t imageWidth,
         uint32_t imageHeight, uint16_t bitsPerPixel, int colorTableEntries) {
     // Setup headers
-    DIBHeader dhead;
-    fillDIBHeader(dhead, imageWidth, imageHeight, bitsPerPixel);
-    FileHeader fhead;
-    fillFileHeader(fhead, dhead, colorTableEntries);
+    DIBHeader dhead(imageWidth, imageHeight, bitsPerPixel);
+    FileHeader fhead(dhead.imageSize, colorTableEntries);
     std::cout << "Projected size: " << fhead.size << " bytes\n";
 
     // Write headers

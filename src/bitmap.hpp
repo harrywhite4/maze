@@ -23,6 +23,8 @@ struct FileHeader {
     uint16_t reserved1 = 0;
     uint16_t reserved2 = 0;
     uint32_t imageDataOffset;
+
+    FileHeader(uint32_t imageSize, unsigned int colorTableEntries);
 };
 
 // Bitmap DIB header (BITMAPINFOHEADER style)
@@ -38,6 +40,8 @@ struct DIBHeader {
     uint32_t verResolution = 2835;
     uint32_t numColors = 0;
     uint32_t numImpColors = 0;
+
+    DIBHeader(uint32_t imageWidth, uint32_t imageHeight, uint16_t bitsPerPixel);
 };
 
 // Reset packing
