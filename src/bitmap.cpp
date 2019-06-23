@@ -104,6 +104,7 @@ bool writeBitmapBW(std::string fname, Image<bool>& image) {
     // Write data
     uint8_t toWrite = 0;
     int bitPos = 0, bytesWritten = 0;
+    // TODO Write in correct vertical order
     for (unsigned int y = 0; y < imageHeight; ++y) {
         // Reset at start of row
         toWrite = 0;

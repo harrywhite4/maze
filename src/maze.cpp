@@ -3,7 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <deque>
-#include <iterator>
+#include <string>
 
 #include "maze.hpp"
 #include "grid.hpp"
@@ -32,6 +32,9 @@ Image<bool> graphToImage(const GridGraph& graph) {
     }
     return image;
 }
+
+// TODO implement graphToText
+std::string graphToText(const GridGraph& graph);
 
 std::optional<unsigned int> getNewNode(unsigned int numNodes,
         std::unordered_set<unsigned int> notInSet) {
