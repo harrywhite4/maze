@@ -7,6 +7,7 @@
 #include "grid.hpp"
 #include "maze.hpp"
 #include "argparse.hpp"
+#include "image.hpp"
 
 const char usage[] = "Usage: maze [options]\nOptions:\n"
                       "-o Output filename (default: \"maze.bmp\")\n"
@@ -44,7 +45,7 @@ int main(int argc, char *argv[]) {
     bool success;
     auto graph = GridGraph(height, width);
     lerwGraph(graph);
-    auto image = graphToImage(graph);
+    Image<bool> image = graphToImage(graph);
     success = writeBitmapBW(fname, image);
 
     if (!success) {
