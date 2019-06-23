@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "bitmap.hpp"
+#include "image.hpp"
 
 int getPaddingBytes(uint32_t imageWidth, uint16_t bitsPerPixel) {
     int rowBits = imageWidth * bitsPerPixel;
@@ -58,9 +59,8 @@ void writeHeaders(std::ofstream& file, uint32_t imageWidth,
 // Write 24 bit color data to bitmap file (adding padding if neccesary)
 bool writeBitmap24(std::string fname, Image<Color24>& image) {
     // Get sizes
-    unsigned int imageHeight = image.getNumColumns();
-    unsigned int imageWidth = image.getNumRows();
-    std::vector<Color24> data = image.getData();
+    unsigned int imageHeight = image.getNumRows();
+    unsigned int imageWidth = image.getNumColumns();
     // Determine padding
     int paddingBytes = getPaddingBytes(imageWidth, 24);
 
@@ -71,15 +71,15 @@ bool writeBitmap24(std::string fname, Image<Color24>& image) {
     // Write Headers
     writeHeaders(file, imageWidth, imageHeight, 24, 0);
     // Write data
-    for (unsigned int i = 0; i < data.size(); ++i) {
-        auto c = data[i];
-        // Write colors
-        file << c.blue << c.green << c.red;
-        // Write padding if end of a row
-        if ((i + 1) % imageHeight == 0) {
-            for (int i = 0; i < paddingBytes; ++i) {
-                file << 0;
-            }
+    for (unsigned int y = 0; y < imageHeight; ++y) {
+        for (unsigned int x = 0; x < imageWidth; ++x) {
+            auto c = image.getValue(x, y);
+            // Write colors
+            file << c.blue << c.green << c.red;
+        }
+        // Write padding at end of a row
+        for (int i = 0; i < paddingBytes; ++i) {
+            file << 0;
         }
     }
     // Close file
@@ -89,9 +89,8 @@ bool writeBitmap24(std::string fname, Image<Color24>& image) {
 
 bool writeBitmapBW(std::string fname, Image<bool>& image) {
     // Get sizes
-    unsigned int imageHeight = image.getNumColumns();
-    unsigned int imageWidth = image.getNumRows();
-    std::vector<bool> data = image.getData();
+    unsigned int imageHeight = image.getNumRows();
+    unsigned int imageWidth = image.getNumColumns();
     std::cout << "Width: " << imageWidth << "\n";
     std::cout << "Height: " << imageHeight << "\n";
 
@@ -110,35 +109,33 @@ bool writeBitmapBW(std::string fname, Image<bool>& image) {
     // Write data
     uint8_t toWrite = 0;
     int bitPos = 0, bytesWritten = 0;
-    for (unsigned int i = 0; i < data.size(); ++i) {
-        bool on = data[i];
-        // Write colors
-        if (on) {
-            // Set bit at bitPos in toWrite to 1
-            toWrite |= (0x01 << (7 - bitPos));
-        }
-        ++bitPos;
-        if (bitPos == 8) {
-            file << toWrite;
-            ++bytesWritten;
-            toWrite = 0;
-            bitPos = 0;
-        }
-
-        // If end of row
-        if ((i + 1) % imageHeight == 0) {
-            // If bits left to be written
-            if (bitPos != 0) {
+    for (unsigned int y = 0; y < imageHeight; ++y) {
+        // Reset at start of row
+        toWrite = 0;
+        bitPos = 0;
+        for (unsigned int x = 0; x < imageWidth; ++x) {
+            bool on = image.getValue(x, y);
+            // Write colors
+            if (on) {
+                // Set bit at bitPos in toWrite to 1
+                toWrite |= (0x01 << (7 - bitPos));
+            }
+            ++bitPos;
+            if (bitPos == 8) {
                 file << toWrite;
                 ++bytesWritten;
+                toWrite = 0;
+                bitPos = 0;
             }
-            // Write padding
-            for (int i = 0; i < paddingBytes; ++i) {
-                file << 0;
-            }
-            // Reset
-            toWrite = 0;
-            bitPos = 0;
+        }
+        // If bits left to be written
+        if (bitPos != 0) {
+            file << toWrite;
+            ++bytesWritten;
+        }
+        // Write padding
+        for (int i = 0; i < paddingBytes; ++i) {
+            file << 0;
         }
     }
     std::cout << "Wrote " << bytesWritten << " data bytes\n";
