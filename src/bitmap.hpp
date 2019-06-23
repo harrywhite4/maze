@@ -51,9 +51,9 @@ void fillDIBHeader(DIBHeader& dhead, uint32_t imageWidth,
 void fillFileHeader(FileHeader& fhead, const DIBHeader& dhead, int colorTableEntries);
 
 // writeBitmap function
-bool writeBitmap24(std::string, const Image<Color24>&);
+bool writeBitmap24(std::string, Image<Color24>&);
 
 // write black and white bitmap function
-bool writeBitmapBW(std::string, const Image<bool>&);
+bool writeBitmapBW(std::string, Image<bool>&);
 
 #endif  // BITMAP_HPP_
