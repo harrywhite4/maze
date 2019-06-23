@@ -3,8 +3,9 @@
 
 #include <vector>
 #include "grid.hpp"
+#include "image.hpp"
 
-std::vector<std::vector<bool>> graphToImage(const GridGraph& graph);
+Image<bool> graphToImage(const GridGraph& graph);
 void lerwGraph(GridGraph& graph);
 
 #endif  // MAZE_HPP_
