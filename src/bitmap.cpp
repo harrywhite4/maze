@@ -6,12 +6,19 @@
 #include "bitmap.hpp"
 #include "image.hpp"
 
-int getPaddingBytes(uint32_t imageWidth, uint16_t bitsPerPixel) {
+// Number of bytes needed for row (without padding)
+int getRowBytes(uint32_t imageWidth, uint16_t bitsPerPixel) {
     int rowBits = imageWidth * bitsPerPixel;
     int rowBytes = rowBits / 8;
+    // Leftover bits need a full byte
     if (rowBits % 8 != 0) {
         ++rowBytes;
     }
+    return rowBytes;
+}
+
+int getPaddingBytes(uint32_t imageWidth, uint16_t bitsPerPixel) {
+    int rowBytes = getRowBytes(imageWidth, bitsPerPixel);
     return 4 - (rowBytes % 4);
 }
 
@@ -19,19 +26,10 @@ DIBHeader::DIBHeader(uint32_t imageWidth, uint32_t imageHeight, uint16_t bitsPer
     imageWidth(imageWidth),
     imageHeight(imageHeight),
     bitsPerPixel(bitsPerPixel) {
-    int paddingBytes, rowBits, rowBytes;
-    // Determine Bytes needed per row (with padding)
-    rowBits = imageWidth * bitsPerPixel;
-    rowBytes = rowBits / 8;
-    // Leftover bits need a byte
-    if (rowBits % 8 != 0) {
-        ++rowBytes;
-    }
-    // Add padding
-    paddingBytes = 4 - (rowBytes % 4);
-    rowBytes += paddingBytes;
+    int rowBytes = getRowBytes(imageWidth, bitsPerPixel);
+    // Add padding to row bytes
+    rowBytes += (4 - (rowBytes % 4));
 
-    // Set size
     this->imageSize = rowBytes * imageHeight;
 }
 
