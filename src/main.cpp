@@ -23,6 +23,7 @@ int main(int argc, char *argv[]) {
     // Argument parsing
     auto parser = ArgumentParser();
     parser.addFlagArg("--help", false);
+    parser.addFlagArg("--text", false);
     parser.addParamArg("-o", "maze.bmp");
     parser.addParamArg("-w", "50");
     parser.addParamArg("-h", "50");
@@ -45,8 +46,13 @@ int main(int argc, char *argv[]) {
     bool success;
     auto graph = GridGraph(height, width);
     lerwGraph(graph);
-    Image<bool> image = graphToImage(graph);
-    success = writeBitmapBW(fname, image);
+    if (parser.getFlag("--text")) {
+        std::cout << graphToText(graph);
+        success = true;
+    } else {
+        Image<bool> image = graphToImage(graph);
+        success = writeBitmapBW(fname, image);
+    }
 
     if (!success) {
         std::cout << "Could not write to file\n";

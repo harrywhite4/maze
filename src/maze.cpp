@@ -34,7 +34,13 @@ Image<bool> graphToImage(const GridGraph& graph) {
 }
 
 // TODO implement graphToText
-std::string graphToText(const GridGraph& graph);
+std::string graphToText(const GridGraph& graph) {
+    std::string s;
+    s.append("+--+--+--+\n");
+    s.append("|  |  |  |\n");
+    s.append("+--+--+--+\n");
+    return s;
+}
 
 std::optional<unsigned int> getNewNode(unsigned int numNodes,
         std::unordered_set<unsigned int> notInSet) {
