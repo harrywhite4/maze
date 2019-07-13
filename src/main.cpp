@@ -13,6 +13,7 @@ const char usage[] = "Usage: maze [options]\nOptions:\n"
                       "-o Output filename (default: \"maze.bmp\")\n"
                       "-w Maze width (default: 50)\n"
                       "-h Maze height (default: 50)\n"
+                      "--text Output as ascii to stdout\n"
                       "--help Print help\n";
 
 int main(int argc, char *argv[]) {
@@ -59,6 +60,5 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    std::cout << "Done!\n";
     exit(EXIT_SUCCESS);
 }
