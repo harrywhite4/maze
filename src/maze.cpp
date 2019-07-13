@@ -33,12 +33,42 @@ Image<bool> graphToImage(const GridGraph& graph) {
     return image;
 }
 
-// TODO implement graphToText
 std::string graphToText(const GridGraph& graph) {
     std::string s;
-    s.append("+--+--+--+\n");
-    s.append("|  |  |  |\n");
-    s.append("+--+--+--+\n");
+    unsigned int numRows = graph.getNumRows();
+    unsigned int numColumns = graph.getNumColumns();
+
+    // Add top row
+    for (unsigned int i = 0; i < numColumns; ++i) {
+        s.append("+--");
+    }
+    s.append("+\n");
+
+    // Write rows
+    for (unsigned int row = 0; row < numRows; ++row) {
+        std::string rowTop = "|", rowBottom = "+";
+        for (unsigned int column = 0; column < numColumns; ++column) {
+            unsigned int nodeNum = graph.nodeNumber(row, column);
+            // Add to top
+            if (graph.hasEdge(nodeNum, Right)) {
+                rowTop.append("   ");
+            } else {
+                rowTop.append("  |");
+            }
+            // Add to bottom
+            if (graph.hasEdge(nodeNum, Down)) {
+                rowBottom.append("  +");
+            } else {
+                rowBottom.append("--+");
+            }
+        }
+        // Add to overall string
+        rowTop.push_back('\n');
+        rowBottom.push_back('\n');
+        s.append(rowTop);
+        s.append(rowBottom);
+    }
+
     return s;
 }
 
