@@ -36,6 +36,10 @@ unsigned int GridGraph::columnNumber(unsigned int node) const {
     return node % numColumns;
 }
 
+unsigned int GridGraph::nodeNumber(unsigned int rowNum, unsigned int columnNum) const {
+    return (rowNum * numColumns) + columnNum;
+}
+
 std::optional<unsigned int> GridGraph::nodeInDirection(unsigned int start, Direction dir) const {
     if (validNode(start)) {
         unsigned int rowNum = rowNumber(start);

@@ -36,6 +36,9 @@ class GridGraph {
     // 0 indexed column number
     unsigned int columnNumber(unsigned int node) const;
 
+    // Get node number from row and column number
+    unsigned int nodeNumber(unsigned int rowNum, unsigned int columnNum) const;
+
     // Number of nodes in the graph
     unsigned int getNumNodes() const;
 
