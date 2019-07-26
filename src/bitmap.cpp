@@ -17,9 +17,18 @@ int getRowBytes(uint32_t imageWidth, uint16_t bitsPerPixel) {
     return rowBytes;
 }
 
+// Internal function to get padding from row bytes
+int getPaddingFromRow(int rowBytes) {
+    if (rowBytes % 4 > 0) {
+        return 4 - (rowBytes % 4);
+    }
+    return 0;
+}
+
 int getPaddingBytes(uint32_t imageWidth, uint16_t bitsPerPixel) {
     int rowBytes = getRowBytes(imageWidth, bitsPerPixel);
-    return 4 - (rowBytes % 4);
+    std::cout << "Row bytes: " << rowBytes << "\n";
+    return getPaddingFromRow(rowBytes);
 }
 
 DIBHeader::DIBHeader(uint32_t imageWidth, uint32_t imageHeight, uint16_t bitsPerPixel) :
@@ -28,7 +37,7 @@ DIBHeader::DIBHeader(uint32_t imageWidth, uint32_t imageHeight, uint16_t bitsPer
     bitsPerPixel(bitsPerPixel) {
     int rowBytes = getRowBytes(imageWidth, bitsPerPixel);
     // Add padding to row bytes
-    rowBytes += (4 - (rowBytes % 4));
+    rowBytes += getPaddingFromRow(rowBytes);
 
     this->imageSize = rowBytes * imageHeight;
 }
