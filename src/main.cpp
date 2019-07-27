@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <random>
+#include <exception>
 
 #include "bitmap.hpp"
 #include "grid.hpp"
@@ -16,6 +17,23 @@ const char usage[] = "Usage: maze [options]\nOptions:\n"
                      "--text Output maze as text to stdout\n"
                      "--verbose Print detailed output\n"
                      "--help Print help\n";
+
+// validate dimension, exiting if not valid
+void validateDimension(int dimension, std::string name) {
+    if (dimension <= 0) {
+        std::cerr << name << " must be a positive number\n";
+        exit(EXIT_FAILURE);
+    }
+}
+
+// string to int, 0 if not able to convert
+int stringToInt(std::string text) {
+    try {
+        return std::stoi(text);
+    } catch(std::exception&) {
+        return 0;
+    }
+}
 
 int main(int argc, char *argv[]) {
     // Variables
@@ -41,9 +59,11 @@ int main(int argc, char *argv[]) {
         exit(EXIT_SUCCESS);
     }
     fname = parser.getParameter("-o");
-    // TODO Handle conversion errors
-    width = std::stoul(parser.getParameter("-w"));
-    height = std::stoul(parser.getParameter("-h"));
+    // Convert width / height & validate
+    width = stringToInt(parser.getParameter("-w"));
+    height = stringToInt(parser.getParameter("-h"));
+    validateDimension(width, "width");
+    validateDimension(height, "height");
 
     // Build data
     bool success;
