@@ -51,6 +51,6 @@ struct DIBHeader {
 bool writeBitmap24(std::string, Image<Color24>&);
 
 // write black and white bitmap function
-bool writeBitmapBW(std::string, Image<bool>&);
+bool writeBitmapBW(std::string, Image<bool>&, bool);
 
 #endif  // BITMAP_HPP_

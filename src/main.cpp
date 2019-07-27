@@ -10,11 +10,12 @@
 #include "image.hpp"
 
 const char usage[] = "Usage: maze [options]\nOptions:\n"
-                      "-o Output filename (default: \"maze.bmp\")\n"
-                      "-w Maze width (default: 50)\n"
-                      "-h Maze height (default: 50)\n"
-                      "--text Output as ascii to stdout\n"
-                      "--help Print help\n";
+                     "-o Output filename (default: \"maze.bmp\")\n"
+                     "-w Maze width (default: 50)\n"
+                     "-h Maze height (default: 50)\n"
+                     "--text Output maze as text to stdout\n"
+                     "--verbose Print detailed output\n"
+                     "--help Print help\n";
 
 int main(int argc, char *argv[]) {
     // Variables
@@ -25,6 +26,7 @@ int main(int argc, char *argv[]) {
     auto parser = ArgumentParser();
     parser.addFlagArg("--help", false);
     parser.addFlagArg("--text", false);
+    parser.addFlagArg("--verbose", false);
     parser.addParamArg("-o", "maze.bmp");
     parser.addParamArg("-w", "50");
     parser.addParamArg("-h", "50");
@@ -52,7 +54,7 @@ int main(int argc, char *argv[]) {
         success = true;
     } else {
         Image<bool> image = graphToImage(graph);
-        success = writeBitmapBW(fname, image);
+        success = writeBitmapBW(fname, image, parser.getFlag("--verbose"));
     }
 
     if (!success) {

@@ -27,7 +27,6 @@ int getPaddingFromRow(int rowBytes) {
 
 int getPaddingBytes(uint32_t imageWidth, uint16_t bitsPerPixel) {
     int rowBytes = getRowBytes(imageWidth, bitsPerPixel);
-    std::cout << "Row bytes: " << rowBytes << "\n";
     return getPaddingFromRow(rowBytes);
 }
 
@@ -47,16 +46,18 @@ FileHeader::FileHeader(uint32_t imageSize, unsigned int colorTableEntries) :
     imageDataOffset(54 + (colorTableEntries * 4)) {
 }
 
-void writeHeaders(std::ofstream& file, uint32_t imageWidth,
+unsigned int writeHeaders(std::ofstream& file, uint32_t imageWidth,
         uint32_t imageHeight, uint16_t bitsPerPixel, int colorTableEntries) {
     // Setup headers
     DIBHeader dhead(imageWidth, imageHeight, bitsPerPixel);
     FileHeader fhead(dhead.imageSize, colorTableEntries);
-    std::cout << "Projected size: " << fhead.size << " bytes\n";
 
     // Write headers
     file.write((char*)&fhead, sizeof(FileHeader));
     file.write((char*)&dhead, sizeof(DIBHeader));
+
+    // Return bytes written
+    return sizeof(FileHeader) + sizeof(DIBHeader);
 }
 
 
@@ -91,22 +92,29 @@ bool writeBitmap24(std::string fname, Image<Color24>& image) {
     return true;
 }
 
-bool writeBitmapBW(std::string fname, Image<bool>& image) {
+bool writeBitmapBW(std::string fname, Image<bool>& image, bool verbose = false) {
     // Get sizes
     unsigned int imageHeight = image.getNumRows();
     unsigned int imageWidth = image.getNumColumns();
-    std::cout << "Width: " << imageWidth << "\n";
-    std::cout << "Height: " << imageHeight << "\n";
+    if (verbose) {
+        std::cout << "Width: " << imageWidth << "\n";
+        std::cout << "Height: " << imageHeight << "\n";
+    }
 
     int paddingBytes = getPaddingBytes(imageWidth, 1);
-    std::cout << "Padding: " << paddingBytes << "\n";
+    if (verbose) {
+        std::cout << "Padding: " << paddingBytes << "\n";
+    }
 
     // Write to file
     std::ofstream file;
     // Open file for binary output
     file.open(fname, std::fstream::out | std::fstream::binary);
     // Write Headers
-    writeHeaders(file, imageWidth, imageHeight, 1, 2);
+    auto headerBytes = writeHeaders(file, imageWidth, imageHeight, 1, 2);
+    if (verbose) {
+        std::cout << "Wrote " << headerBytes << " header bytes\n";
+    }
     // Write color table
     file << (char)0x00 << (char)0x00 << (char)0x00 << (char)0x00;
     file << (char)0xff << (char)0xff << (char)0xff << (char)0x00;
@@ -143,8 +151,11 @@ bool writeBitmapBW(std::string fname, Image<bool>& image) {
             file << 0;
         }
     }
-    std::cout << "Wrote " << bytesWritten << " data bytes\n";
+    if (verbose) {
+        std::cout << "Wrote " << bytesWritten << " data bytes\n";
+    }
     // Close file
     file.close();
+    std::cout << "Saved to " << fname << "\n";
     return true;
 }
