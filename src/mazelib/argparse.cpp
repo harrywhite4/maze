@@ -4,6 +4,8 @@
 
 #include "argparse.hpp"
 
+// TODO replace with cxxoptshttps://github.com/jarro2783/cxxopts
+
 void ArgumentParser::addParamArg(std::string option, std::string def) {
     paramArgs[option] = def;
 }
