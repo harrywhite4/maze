@@ -9,8 +9,6 @@ target_include_directories(bitmap PUBLIC bitmap)
 
 # Maze executable
 set(MAZE_SOURCES
-    mazelib/argparse.hpp
-    mazelib/argparse.cpp
     mazelib/grid.hpp
     mazelib/grid.cpp
     mazelib/maze.hpp
