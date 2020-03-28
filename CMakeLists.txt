@@ -17,6 +17,8 @@ endif()
 
 # Googletest library
 add_subdirectory(extern/googletest EXCLUDE_FROM_ALL)
+add_subdirectory(extern/cxxopts EXCLUDE_FROM_ALL)
+
 # Libraries
 add_subdirectory(src)
 # Executables

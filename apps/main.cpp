@@ -7,16 +7,8 @@
 #include "bitmap.hpp"
 #include "grid.hpp"
 #include "maze.hpp"
-#include "argparse.hpp"
 #include "image.hpp"
-
-const char usage[] = "Usage: maze [options]\nOptions:\n"
-                     "-o Output filename (default: \"maze.bmp\")\n"
-                     "-w Maze width (default: 50)\n"
-                     "-h Maze height (default: 50)\n"
-                     "--text Output maze as text to stdout\n"
-                     "--verbose Print detailed output\n"
-                     "--help Print help\n";
+#include "cxxopts.hpp"
 
 // validate dimension, exiting if not valid
 void validateDimension(int dimension, std::string name) {
@@ -26,42 +18,28 @@ void validateDimension(int dimension, std::string name) {
     }
 }
 
-// string to int, 0 if not able to convert
-int stringToInt(std::string text) {
-    try {
-        return std::stoi(text);
-    } catch(std::exception&) {
-        return 0;
-    }
-}
-
 int main(int argc, char *argv[]) {
-    // Variables
-    bool parseSuccess;
-    std::string fname;
-    unsigned int width, height;
     // Argument parsing
-    auto parser = ArgumentParser();
-    parser.addFlagArg("--help", false);
-    parser.addFlagArg("--text", false);
-    parser.addFlagArg("--verbose", false);
-    parser.addParamArg("-o", "maze.bmp");
-    parser.addParamArg("-w", "50");
-    parser.addParamArg("-h", "50");
-    parseSuccess = parser.parse(argc, argv);
+    auto options = cxxopts::Options("maze", "Generate mazes");
+    options.add_options()
+        ("o,output", "Output filename", cxxopts::value<std::string>()->default_value("maze.bmp"))
+        ("w,width", "Maze width", cxxopts::value<int>()->default_value("50"))
+        ("h,height", "Maze height", cxxopts::value<int>()->default_value("50"))
+        ("text", "Output maze as text to stdout", cxxopts::value<bool>()->default_value("false"))
+        ("verbose", "Print detailed output", cxxopts::value<bool>()->default_value("false"))
+        ("help", "Print help")
+    ;
+    
+    auto result = options.parse(argc, argv);
 
-    if (!parseSuccess) {
-        std::cout << usage;
-        exit(EXIT_FAILURE);
-    }
-    if (parser.getFlag("--help")) {
-        std::cout << usage;
+    if (result.count("help")) {
+        std::cout << options.help() << std::endl;
         exit(EXIT_SUCCESS);
     }
-    fname = parser.getParameter("-o");
+    std::string fname = result["output"].as<std::string>();
     // Convert width / height & validate
-    width = stringToInt(parser.getParameter("-w"));
-    height = stringToInt(parser.getParameter("-h"));
+    int width = result["width"].as<int>();
+    int height = result["width"].as<int>();
     validateDimension(width, "width");
     validateDimension(height, "height");
 
@@ -69,12 +47,12 @@ int main(int argc, char *argv[]) {
     bool success;
     auto graph = GridGraph(height, width);
     lerwGraph(graph);
-    if (parser.getFlag("--text")) {
+    if (result.count("text")) {
         std::cout << graphToText(graph);
         success = true;
     } else {
         Image<bool> image = graphToImage(graph);
-        success = writeBitmapBW(fname, image, parser.getFlag("--verbose"));
+        success = writeBitmapBW(fname, image, result["verbose"].as<bool>());
     }
 
     if (!success) {
