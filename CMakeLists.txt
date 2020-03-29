@@ -1,7 +1,12 @@
 cmake_minimum_required(VERSION 3.13)
 
 # Set project name and version
-project(maze VERSION 0.1 LANGUAGES CXX)
+project(maze 
+        LANGUAGES CXX
+        VERSION 0.1.0
+        DESCRIPTION "Generate mazes")
+
+configure_file(apps/MazeConfig.h.in apps/MazeConfig.h)
 
 # Set required c++ standard
 set(CMAKE_CXX_STANDARD 17)

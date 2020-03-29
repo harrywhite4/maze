@@ -4,6 +4,7 @@
 #include <random>
 #include <exception>
 
+#include "MazeConfig.h"
 #include "bitmap.hpp"
 #include "grid.hpp"
 #include "maze.hpp"
@@ -20,20 +21,21 @@ void validateDimension(int dimension, std::string name) {
 
 int main(int argc, char *argv[]) {
     // Argument definition
-    auto options = cxxopts::Options("maze", "Generate mazes");
+    auto options = cxxopts::Options("maze", MAZE_DESCRIPTION);
     options.add_options()
         ("o,output", "Output filename", cxxopts::value<std::string>()->default_value("maze.bmp"))
         ("w,width", "Maze width", cxxopts::value<int>()->default_value("50"))
         ("h,height", "Maze height", cxxopts::value<int>()->default_value("50"))
         ("text", "Output maze as text to stdout", cxxopts::value<bool>()->default_value("false"))
         ("verbose", "Print detailed output", cxxopts::value<bool>()->default_value("false"))
+        ("version", "Print version information", cxxopts::value<bool>()->default_value("false"))
         ("help", "Print help", cxxopts::value<bool>()->default_value("false"))
     ;
     
     // Variables
     std::string fname;
     int width, height;
-    bool help, text, verbose;
+    bool help, text, verbose, version;
     // Parse arguments
     try {
         cxxopts::ParseResult result = options.parse(argc, argv);
@@ -44,6 +46,7 @@ int main(int argc, char *argv[]) {
         help = result["help"].as<bool>();
         text = result["text"].as<bool>();
         verbose = result["verbose"].as<bool>();
+        version = result["version"].as<bool>();
     } catch (cxxopts::OptionParseException& e) {
         std::cerr << e.what() << std::endl;
         exit(EXIT_FAILURE);
@@ -53,8 +56,14 @@ int main(int argc, char *argv[]) {
     validateDimension(width, "width");
     validateDimension(height, "height");
 
+    // Show help
     if (help) {
         std::cout << options.help() << std::endl;
+        exit(EXIT_SUCCESS);
+    }
+    // Show version info
+    if (version) {
+        std::cout << "maze " << MAZE_VERSION << std::endl;
         exit(EXIT_SUCCESS);
     }
 
