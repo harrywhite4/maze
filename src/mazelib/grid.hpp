@@ -1,5 +1,5 @@
-#ifndef GRID_HPP_
-#define GRID_HPP_
+#ifndef MAZELIB_GRID_HPP_
+#define MAZELIB_GRID_HPP_
 
 #include <vector>
 #include <optional>
@@ -67,7 +67,8 @@ class GridGraph {
     void getPossibleDirs(std::vector<Direction>& dirs, unsigned int node);
 
     // Add a random edge in direction
-    std::optional<Direction> addRandomEdge(const std::vector<Direction>& dirs, unsigned int node, std::mt19937& gen);
+    std::optional<Direction> addRandomEdge(const std::vector<Direction>& dirs,
+                                           unsigned int node, std::mt19937& gen);
 };
 
-#endif  // GRID_HPP_
+#endif  // MAZELIB_GRID_HPP_

@@ -53,8 +53,8 @@ unsigned int writeHeaders(std::ofstream& file, uint32_t imageWidth,
     FileHeader fhead(dhead.imageSize, colorTableEntries);
 
     // Write headers
-    file.write((char*)&fhead, sizeof(FileHeader));
-    file.write((char*)&dhead, sizeof(DIBHeader));
+    file.write(reinterpret_cast<char*>(&fhead), sizeof(FileHeader));
+    file.write(reinterpret_cast<char*>(&dhead), sizeof(DIBHeader));
 
     // Return bytes written
     return sizeof(FileHeader) + sizeof(DIBHeader);
@@ -116,8 +116,10 @@ bool writeBitmapBW(std::string fname, Image<bool>& image, bool verbose = false) 
         std::cout << "Wrote " << headerBytes << " header bytes\n";
     }
     // Write color table
-    file << (char)0x00 << (char)0x00 << (char)0x00 << (char)0x00;
-    file << (char)0xff << (char)0xff << (char)0xff << (char)0x00;
+    file << static_cast<char>(0x00) << static_cast<char>(0x00)
+         << static_cast<char>(0x00) << static_cast<char>(0x00);
+    file << static_cast<char>(0xff) << static_cast<char>(0xff)
+         << static_cast<char>(0xff) << static_cast<char>(0x00);
     // Write data
     uint8_t toWrite = 0;
     int bitPos = 0, bytesWritten = 0;

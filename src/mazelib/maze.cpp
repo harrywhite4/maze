@@ -179,7 +179,8 @@ void lerwGraph(GridGraph& graph) {
             }
         } else {
             // If can't add edge from currentNode
-            std::cerr << "Could not move from " << currentNode << " islen " << inSection.size() << "\n";
+            std::cerr << "Could not move from " << currentNode
+                << " islen " << inSection.size() << "\n";
             break;
         }
     }

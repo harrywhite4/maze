@@ -1,5 +1,5 @@
-#ifndef IMAGE_HPP_
-#define IMAGE_HPP_
+#ifndef BITMAP_IMAGE_HPP_
+#define BITMAP_IMAGE_HPP_
 
 #include <vector>
 
@@ -56,4 +56,4 @@ void Image<T>::setValue(unsigned int x, unsigned int y, T value) {
     data[getArrayIndex(x, y)] = value;
 }
 
-#endif  // IMAGE_HPP_
+#endif  // BITMAP_IMAGE_HPP_
