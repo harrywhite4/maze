@@ -7,7 +7,7 @@ set(BITMAP_SOURCES
 add_library(bitmap ${BITMAP_SOURCES})
 target_include_directories(bitmap PUBLIC bitmap)
 
-# Maze executable
+# Maze library
 set(MAZE_SOURCES
     mazelib/grid.hpp
     mazelib/grid.cpp
@@ -17,3 +17,11 @@ set(MAZE_SOURCES
 add_library(mazelib ${MAZE_SOURCES})
 target_link_libraries(mazelib PRIVATE bitmap)
 target_include_directories(mazelib PUBLIC mazelib)
+
+# Maze executable
+add_executable(maze main.cpp)
+target_link_libraries(maze cxxopts bitmap mazelib)
+# Ouput to bin directory
+set_target_properties(maze PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
+# Include config header
+target_include_directories(maze PUBLIC "${PROJECT_BINARY_DIR}/src")

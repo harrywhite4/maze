@@ -6,7 +6,7 @@ project(maze
         VERSION 0.1.0
         DESCRIPTION "Generate mazes")
 
-configure_file(apps/MazeConfig.h.in apps/MazeConfig.h)
+configure_file(src/MazeConfig.h.in src/MazeConfig.h)
 
 # Set required c++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -24,9 +24,7 @@ endif()
 add_subdirectory(extern/googletest EXCLUDE_FROM_ALL)
 add_subdirectory(extern/cxxopts EXCLUDE_FROM_ALL)
 
-# Libraries
+# Source
 add_subdirectory(src)
-# Executables
-add_subdirectory(apps)
 # Test exceutable
 add_subdirectory(test)

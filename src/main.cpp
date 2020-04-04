@@ -30,8 +30,8 @@ int main(int argc, char *argv[]) {
         ("verbose", "Print detailed output", cxxopts::value<bool>()->default_value("false"))
         ("version", "Print version information", cxxopts::value<bool>()->default_value("false"))
         ("help", "Print help", cxxopts::value<bool>()->default_value("false"))
-    ;
-    
+        ;
+
     // Variables
     std::string fname;
     int width, height;
