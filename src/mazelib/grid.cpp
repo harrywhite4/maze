@@ -8,8 +8,8 @@
 GridGraph::GridGraph(unsigned int numRows, unsigned int numColumns) :
     numRows(numRows),
     numColumns(numColumns),
-    rightEdges(numColumns * numRows, false),
-    downEdges(numColumns * numRows, false) {
+    horEdges((numColumns - 1) * numRows, false),
+    vertEdges(numColumns * (numRows - 1), false) {
 }
 
 bool GridGraph::validNode(unsigned int node) const {
@@ -51,18 +51,48 @@ std::optional<unsigned int> GridGraph::nodeInDirection(unsigned int start, Direc
                 }
                 break;
             case Right:
-                if ((colNum+1) < numColumns) {
+                if (colNum < numColumns + 1) {
                     return start+1;
                 }
                 break;
             case Up:
                 if (rowNum > 0) {
-                    return ((rowNum-1)*numColumns) + colNum;
+                    return nodeNumber(rowNum - 1, colNum);
                 }
                 break;
             case Down:
                 if ((rowNum+1) < numRows) {
-                    return ((rowNum+1)*numColumns) + colNum;
+                    return nodeNumber(rowNum + 1, colNum);
+                }
+                break;
+        }
+    }
+    return {};
+}
+
+std::optional<unsigned int> GridGraph::edgeIndex(unsigned int node, Direction dir) const {
+    if (validNode(node)) {
+        unsigned int rowNum = rowNumber(node);
+        unsigned int columnNum = columnNumber(node);
+        switch (dir) {
+            case Right:
+                if (columnNum < numColumns - 1) {
+                    return node - rowNum;
+                }
+                break;
+            case Left:
+                if (columnNum > 0) {
+                    return node - rowNum - 1;
+                }
+                break;
+            case Down:
+                if (rowNum < numRows - 1) {
+                    return node;
+                }
+                break;
+            case Up:
+                if (rowNum > 0) {
+                    return nodeNumber(rowNum - 1, columnNum);
                 }
                 break;
         }
@@ -75,25 +105,13 @@ bool GridGraph::hasEdge(unsigned int node, Direction dir) const {
         return false;
     }
 
-    int columnNum = columnNumber(node);
-    switch (dir) {
-    case Right:
-        return rightEdges[node];
-        break;
-    case Left:
-        if (columnNum > 0) {
-            return rightEdges[node-1];
+    auto index = edgeIndex(node, dir);
+    if (index.has_value()) {
+        if (dir == Left || dir == Right) {
+            return horEdges[index.value()];
+        } else {
+            return vertEdges[index.value()];
         }
-        break;
-    case Down:
-        return downEdges[node];
-        break;
-    case Up:
-        int rowNum = rowNumber(node);
-        if (rowNum > 0) {
-            return downEdges[((rowNum-1)*numColumns) + columnNum];
-        }
-        break;
     }
     return false;
 }
@@ -103,29 +121,14 @@ bool GridGraph::setEdge(unsigned int node, Direction dir, bool value) {
         return false;
     }
 
-    unsigned int columnNum = columnNumber(node);
-    switch (dir) {
-    case Right:
-        rightEdges[node] = value;
-        return true;
-        break;
-    case Left:
-        if (columnNum > 0) {
-            rightEdges[node-1] = value;
-            return true;
+    auto index = edgeIndex(node, dir);
+    if (index.has_value()) {
+        if (dir == Left || dir == Right) {
+            horEdges[index.value()] = value;
+        } else {
+            vertEdges[index.value()] = value;
         }
-        break;
-    case Down:
-        downEdges[node] = value;
         return true;
-        break;
-    case Up:
-        int rowNum = rowNumber(node);
-        if (rowNum > 0) {
-            downEdges[((rowNum-1)*numColumns) + columnNum] = value;
-            return true;
-        }
-        break;
     }
     return false;
 }
@@ -170,8 +173,10 @@ std::optional<Direction> GridGraph::addRandomEdge(const std::vector<Direction>& 
         if (success) {
             return dir;
         } else {
-            std::cout << "Could not add edge " << dir << " from " << node << "\n";
+            std::cerr << "Could not add edge " << dir << " from " << node << "\n";
         }
+    } else {
+        std::cerr << "Possible dirs empty!\n";
     }
     return {};
 }

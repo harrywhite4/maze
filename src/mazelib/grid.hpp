@@ -18,11 +18,14 @@ class GridGraph {
     unsigned int numColumns;
 
     // Used to store edge information
-    std::vector<bool> rightEdges;
-    std::vector<bool> downEdges;
+    std::vector<bool> horEdges;
+    std::vector<bool> vertEdges;
 
     // Set edge from node in direction to value, return whether successful
     bool setEdge(unsigned int node, Direction dir, bool value);
+
+    // Get index in horEdges or vertEdges for an edge
+    std::optional<unsigned int> edgeIndex(unsigned int node, Direction dir) const;
 
  public:
     GridGraph(unsigned int numRows, unsigned int rowWidth);
