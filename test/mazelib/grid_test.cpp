@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "grid.hpp"
+#include "mazelib/grid.hpp"
 
 class GridGraphTest : public ::testing::Test {
  protected:

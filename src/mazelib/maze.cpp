@@ -5,9 +5,9 @@
 #include <deque>
 #include <string>
 
-#include "maze.hpp"
-#include "grid.hpp"
-#include "image.hpp"
+#include "mazelib/maze.hpp"
+#include "mazelib/grid.hpp"
+#include "bitmap/image.hpp"
 
 Image<bool> graphToImage(const GridGraph& graph) {
     unsigned int pixelX, pixelY, row, column;

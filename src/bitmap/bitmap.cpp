@@ -3,8 +3,8 @@
 #include <string>
 #include <vector>
 
-#include "bitmap.hpp"
-#include "image.hpp"
+#include "bitmap/bitmap.hpp"
+#include "bitmap/image.hpp"
 
 // Number of bytes needed for row (without padding)
 int getRowBytes(uint32_t imageWidth, uint16_t bitsPerPixel) {

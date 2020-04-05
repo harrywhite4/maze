@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "image.hpp"
+#include "bitmap/image.hpp"
 
 // 24 bit color
 struct Color24 {

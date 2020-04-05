@@ -3,7 +3,7 @@
 #include <random>
 #include <iostream>
 
-#include "grid.hpp"
+#include "mazelib/grid.hpp"
 
 GridGraph::GridGraph(unsigned int numRows, unsigned int numColumns) :
     numRows(numRows),

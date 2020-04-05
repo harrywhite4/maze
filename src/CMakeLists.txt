@@ -5,7 +5,7 @@ set(BITMAP_SOURCES
     bitmap/image.hpp)
 
 add_library(bitmap ${BITMAP_SOURCES})
-target_include_directories(bitmap PUBLIC bitmap)
+target_include_directories(bitmap PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Maze library
 set(MAZE_SOURCES
@@ -16,7 +16,7 @@ set(MAZE_SOURCES
 
 add_library(mazelib ${MAZE_SOURCES})
 target_link_libraries(mazelib PRIVATE bitmap)
-target_include_directories(mazelib PUBLIC mazelib)
+target_include_directories(mazelib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Maze executable
 add_executable(maze main.cpp)

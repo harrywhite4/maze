@@ -4,8 +4,8 @@
 #include <vector>
 #include <string>
 
-#include "grid.hpp"
-#include "image.hpp"
+#include "mazelib/grid.hpp"
+#include "bitmap/image.hpp"
 
 Image<bool> graphToImage(const GridGraph& graph);
 std::string graphToText(const GridGraph& graph);

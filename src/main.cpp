@@ -5,10 +5,10 @@
 #include <exception>
 
 #include "MazeConfig.h"
-#include "bitmap.hpp"
-#include "grid.hpp"
-#include "maze.hpp"
-#include "image.hpp"
+#include "bitmap/bitmap.hpp"
+#include "bitmap/image.hpp"
+#include "mazelib/grid.hpp"
+#include "mazelib/maze.hpp"
 #include "cxxopts.hpp"
 
 // validate dimension, exiting if not valid
