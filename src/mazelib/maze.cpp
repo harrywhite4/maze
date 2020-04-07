@@ -9,6 +9,25 @@
 #include "mazelib/grid.hpp"
 #include "bitmap/image.hpp"
 
+Direction reverse(Direction dir) {
+    Direction reversed;
+    switch (dir) {
+        case Left:
+            reversed = Right;
+            break;
+        case Right:
+            reversed = Left;
+            break;
+        case Up:
+            reversed = Down;
+            break;
+        case Down:
+            reversed = Up;
+            break;
+    }
+    return reversed;
+}
+
 Image<bool> graphToImage(const GridGraph& graph) {
     unsigned int pixelX, pixelY, row, column;
     unsigned int numNodes = graph.getNumNodes();
@@ -73,7 +92,7 @@ std::string graphToText(const GridGraph& graph) {
 }
 
 std::optional<unsigned int> getNewNode(unsigned int numNodes,
-        std::unordered_set<unsigned int> notInSet) {
+                                       std::unordered_set<unsigned int> notInSet) {
     // Get next node not in maze if there is one
     if (!notInSet.empty()) {
         return *notInSet.begin();
@@ -82,28 +101,36 @@ std::optional<unsigned int> getNewNode(unsigned int numNodes,
 }
 
 void removeFromSet(std::unordered_set<unsigned int>& from,
-        const std::unordered_set<unsigned int>& removals) {
+                   const std::unordered_set<unsigned int>& removals) {
     for (auto n : removals) {
         from.erase(n);
     }
 }
 
 void eraseLoop(GridGraph& graph, unsigned int loopNode,
-        std::deque<Edge>& history, std::unordered_set<unsigned int>& sectionNodes) {
+               std::deque<Direction>& history, std::unordered_set<unsigned int>& inSection) {
     // Remove edges until we reach the the node
-    Edge lastEdge;
+    unsigned int currentNode = loopNode;
+    Direction lastDir, revDir;
+    bool removed;
     while (!history.empty()) {
-        lastEdge = history.back();
+        lastDir = history.back();
         history.pop_back();
-        graph.removeEdge(lastEdge.node, lastEdge.dir);
-        if (sectionNodes.count(lastEdge.node) > 0) {
-            sectionNodes.erase(lastEdge.node);
-        } else {
-            std::cerr << "Node in history was not in section\n";
+
+        revDir = reverse(lastDir);
+        removed = graph.removeEdge(currentNode, revDir);
+        if (!removed) {
+            std::cerr << "Edge could not be removed\n";
         }
-        if (lastEdge.node == loopNode) {
+        inSection.erase(currentNode);
+
+        currentNode = graph.nodeInDirection(currentNode, revDir).value();
+        if (currentNode == loopNode) {
             break;
         }
+    }
+    if (currentNode != loopNode) {
+        std::cerr << "Loop could not be erased\n";
     }
 }
 
@@ -121,8 +148,7 @@ void lerwGraph(GridGraph& graph) {
     std::unordered_set<unsigned int> notInMaze;
     std::unordered_set<unsigned int> inSection;
     std::vector<Direction> possibleDirs;
-    // TODO remove duplicate node storage for histroy & inSection
-    std::deque<Edge> history;
+    std::deque<Direction> history;
 
     // Add all to not in maze except starting node
     for (unsigned int i = 0; i < numNodes; ++i) {
@@ -150,7 +176,7 @@ void lerwGraph(GridGraph& graph) {
         dir = graph.addRandomEdge(possibleDirs, currentNode, gen);
         if (dir.has_value()) {
             // Add to history
-            history.push_back(Edge{currentNode, dir.value()});
+            history.push_back(dir.value());
             // Get node new edge goes to
             nextNode = graph.nodeInDirection(currentNode, dir.value());
             if (nextNode.has_value()) {

@@ -8,11 +8,6 @@
 
 enum Direction: unsigned int {Left = 0, Right, Up, Down};
 
-struct Edge {
-    unsigned int node;
-    Direction dir;
-};
-
 class GridGraph {
     unsigned int numRows;
     unsigned int numColumns;
