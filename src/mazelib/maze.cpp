@@ -122,7 +122,11 @@ void eraseLoop(GridGraph& graph, unsigned int loopNode,
         if (!removed) {
             std::cerr << "Edge could not be removed\n";
         }
-        inSection.erase(currentNode);
+        // Remove node from section
+        // except loopNode since we will exit with an edge existing to this node
+        if (currentNode != loopNode) {
+            inSection.erase(currentNode);
+        }
 
         currentNode = graph.nodeInDirection(currentNode, revDir).value();
         if (currentNode == loopNode) {
@@ -185,8 +189,6 @@ void lerwGraph(GridGraph& graph) {
                     // Erase loop
                     eraseLoop(graph, nextNode.value(), history, inSection);
                     currentNode = nextNode.value();
-                    // Add node back to section
-                    inSection.insert(currentNode);
                     continue;
                 }
                 // If node was already in maze
