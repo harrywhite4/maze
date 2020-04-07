@@ -26,10 +26,10 @@ int main(int argc, char *argv[]) {
         ("o,output", "Output filename", cxxopts::value<std::string>()->default_value("maze.bmp"))
         ("w,width", "Maze width", cxxopts::value<int>()->default_value("50"))
         ("h,height", "Maze height", cxxopts::value<int>()->default_value("50"))
-        ("text", "Output maze as text to stdout", cxxopts::value<bool>()->default_value("false"))
-        ("verbose", "Print detailed output", cxxopts::value<bool>()->default_value("false"))
-        ("version", "Print version information", cxxopts::value<bool>()->default_value("false"))
-        ("help", "Print help", cxxopts::value<bool>()->default_value("false"))
+        ("text", "Output maze as text to stdout", cxxopts::value<bool>())
+        ("verbose", "Print detailed output", cxxopts::value<bool>())
+        ("version", "Print version information", cxxopts::value<bool>())
+        ("help", "Print help", cxxopts::value<bool>())
         ;
 
     // Variables
