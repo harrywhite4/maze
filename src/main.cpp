@@ -19,9 +19,22 @@ void validateDimension(int dimension, std::string name) {
     }
 }
 
+void createMaze(GridGraph& graph) {
+    lerwGraph(graph);
+}
+
+void outputMaze(const GridGraph& maze, std::string fname, bool text, bool verbose) {
+    if (text) {
+        std::cout << graphToText(maze);
+    } else {
+        Image<bool> image = graphToImage(maze);
+        writeBitmapBW(fname, image, verbose);
+    }
+}
+
 int main(int argc, char *argv[]) {
     // Argument definition
-    auto options = cxxopts::Options("maze", MAZE_DESCRIPTION);
+    cxxopts::Options options("maze", MAZE_DESCRIPTION);
     options.add_options()
         ("o,output", "Output filename", cxxopts::value<std::string>()->default_value("maze.bmp"))
         ("w,width", "Maze width", cxxopts::value<int>()->default_value("50"))
@@ -52,35 +65,36 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    // Validation
-    validateDimension(width, "width");
-    validateDimension(height, "height");
-
     // Show help
     if (help) {
-        std::cout << options.help() << std::endl;
+        std::cout << options.help() << "\n";
         exit(EXIT_SUCCESS);
     }
     // Show version info
     if (version) {
-        std::cout << "maze " << MAZE_VERSION << std::endl;
+        std::cout << "maze " << MAZE_VERSION << "\n";
         exit(EXIT_SUCCESS);
     }
 
+    // Validation
+    validateDimension(width, "width");
+    validateDimension(height, "height");
+
     // Build data
-    bool success;
-    auto graph = GridGraph(height, width);
-    lerwGraph(graph);
-    if (text) {
-        std::cout << graphToText(graph);
-        success = true;
-    } else {
-        Image<bool> image = graphToImage(graph);
-        success = writeBitmapBW(fname, image, verbose);
+    GridGraph graph(height, width);
+    try {
+        createMaze(graph);
+    } catch (std::exception& e) {
+        std::cerr << "An error occurred while creating maze :(\n";
+        std::cerr << e.what() << "\n";
+        exit(EXIT_FAILURE);
     }
 
-    if (!success) {
-        std::cout << "Could not write to file\n";
+    try {
+        outputMaze(graph, fname, text, verbose);
+    } catch (std::exception& e) {
+        std::cerr << "An error occurred while outputting maze :(\n";
+        std::cerr << e.what() << "\n";
         exit(EXIT_FAILURE);
     }
 

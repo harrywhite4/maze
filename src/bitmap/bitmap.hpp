@@ -48,9 +48,9 @@ struct DIBHeader {
 #pragma pack(pop)
 
 // writeBitmap function
-bool writeBitmap24(std::string, Image<Color24>&);
+void writeBitmap24(std::string, Image<Color24>&);
 
 // write black and white bitmap function
-bool writeBitmapBW(std::string, Image<bool>&, bool);
+void writeBitmapBW(std::string, Image<bool>&, bool);
 
 #endif  // BITMAP_BITMAP_HPP_

@@ -62,7 +62,7 @@ unsigned int writeHeaders(std::ofstream& file, uint32_t imageWidth,
 
 
 // Write 24 bit color data to bitmap file (adding padding if neccesary)
-bool writeBitmap24(std::string fname, Image<Color24>& image) {
+void writeBitmap24(std::string fname, Image<Color24>& image) {
     // Get sizes
     unsigned int imageHeight = image.getNumRows();
     unsigned int imageWidth = image.getNumColumns();
@@ -89,10 +89,9 @@ bool writeBitmap24(std::string fname, Image<Color24>& image) {
     }
     // Close file
     file.close();
-    return true;
 }
 
-bool writeBitmapBW(std::string fname, Image<bool>& image, bool verbose = false) {
+void writeBitmapBW(std::string fname, Image<bool>& image, bool verbose = false) {
     // Get sizes
     unsigned int imageHeight = image.getNumRows();
     unsigned int imageWidth = image.getNumColumns();
@@ -159,5 +158,4 @@ bool writeBitmapBW(std::string fname, Image<bool>& image, bool verbose = false) 
     // Close file
     file.close();
     std::cout << "Saved to " << fname << "\n";
-    return true;
 }

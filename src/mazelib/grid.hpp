@@ -17,10 +17,13 @@ class GridGraph {
     std::vector<bool> vertEdges;
 
     // Set edge from node in direction to value, return whether successful
-    bool setEdge(unsigned int node, Direction dir, bool value);
+    void setEdge(unsigned int node, Direction dir, bool value);
 
-    // Get index in horEdges or vertEdges for an edge
+    // Get index in horEdges or vertEdges for an edge if the edge exists
     std::optional<unsigned int> edgeIndex(unsigned int node, Direction dir) const;
+
+    // Throw exception if node is invalid
+    void validateNode(unsigned int node) const;
 
  public:
     GridGraph(unsigned int numRows, unsigned int rowWidth);
@@ -47,23 +50,25 @@ class GridGraph {
     unsigned int getNumColumns() const;
 
     // Get the node in direction dir from start if valid
-    std::optional<unsigned int> nodeInDirection(unsigned int start, Direction dir) const;
+    unsigned int nodeInDirection(unsigned int start, Direction dir) const;
 
-    // Whether edge in this direction from node exists
+    // Returns whether an edge is set
+    // This will return false for edges that dont exist within the graph
     bool hasEdge(unsigned int node, Direction dir) const;
 
-    // Add an edge from node in this direction, return whether edge was added
-    bool addEdge(unsigned int node, Direction dir);
+    // Add an edge from node in this direction
+    void addEdge(unsigned int node, Direction dir);
 
-    // Remove an edge from node in this direction, return whether edge was removed
-    bool removeEdge(unsigned int node, Direction dir);
+    // Remove an edge from node in this direction
+    void removeEdge(unsigned int node, Direction dir);
 
-    // Get possible dirs
+    // Get possible directions to move from a given node
+    // Does not allow backtracking over set edges
     void getPossibleDirs(std::vector<Direction>& dirs, unsigned int node);
 
-    // Add a random edge in direction
-    std::optional<Direction> addRandomEdge(const std::vector<Direction>& dirs,
-                                           unsigned int node, std::mt19937& gen);
+    // Add a random edge from a list of directions
+    Direction addRandomEdge(const std::vector<Direction>& dirs,
+                            unsigned int node, std::mt19937& gen);
 };
 
 #endif  // MAZELIB_GRID_HPP_

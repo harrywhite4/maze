@@ -4,6 +4,7 @@
 #include <iostream>
 #include <deque>
 #include <string>
+#include <stdexcept>
 
 #include "mazelib/maze.hpp"
 #include "mazelib/grid.hpp"
@@ -91,13 +92,13 @@ std::string graphToText(const GridGraph& graph) {
     return s;
 }
 
-std::optional<unsigned int> getNewNode(unsigned int numNodes,
-                                       std::unordered_set<unsigned int> notInSet) {
+unsigned int getNewNode(unsigned int numNodes,
+                        std::unordered_set<unsigned int> notInSet) {
     // Get next node not in maze if there is one
     if (!notInSet.empty()) {
         return *notInSet.begin();
     }
-    return {};
+    throw std::invalid_argument("Attempting to get new node from empty set");
 }
 
 void removeFromSet(std::unordered_set<unsigned int>& from,
@@ -112,23 +113,19 @@ void eraseLoop(GridGraph& graph, unsigned int loopNode,
     // Remove edges until we reach the the node
     unsigned int currentNode = loopNode;
     Direction lastDir, revDir;
-    bool removed;
     while (!history.empty()) {
         lastDir = history.back();
         history.pop_back();
-
         revDir = reverse(lastDir);
-        removed = graph.removeEdge(currentNode, revDir);
-        if (!removed) {
-            std::cerr << "Edge could not be removed\n";
-        }
+        graph.removeEdge(currentNode, revDir);
+
         // Remove node from section
         // except loopNode since we will exit with an edge existing to this node
         if (currentNode != loopNode) {
             inSection.erase(currentNode);
         }
 
-        currentNode = graph.nodeInDirection(currentNode, revDir).value();
+        currentNode = graph.nodeInDirection(currentNode, revDir);
         if (currentNode == loopNode) {
             break;
         }
@@ -146,8 +143,8 @@ void lerwGraph(GridGraph& graph) {
     // Variables
     unsigned int currentNode = 0;
     unsigned int numNodes = graph.getNumNodes();
-    std::optional<unsigned int> nextNode, newNode;
-    std::optional<Direction> dir;
+    unsigned int nextNode, newNode;
+    Direction dir;
     // Setup data structures
     std::unordered_set<unsigned int> notInMaze;
     std::unordered_set<unsigned int> inSection;
@@ -166,50 +163,33 @@ void lerwGraph(GridGraph& graph) {
         // If starting again
         if (inSection.empty()) {
             newNode = getNewNode(numNodes, notInMaze);
-            if (newNode.has_value()) {
-                currentNode = newNode.value();
-                inSection.insert(currentNode);
-            } else {
-                std::cerr << "Could not reset\n";
-                break;
-            }
+            currentNode = newNode;
+            inSection.insert(currentNode);
         }
 
         // add random edge
         graph.getPossibleDirs(possibleDirs, currentNode);
         dir = graph.addRandomEdge(possibleDirs, currentNode, gen);
-        if (dir.has_value()) {
-            // Add to history
-            history.push_back(dir.value());
-            // Get node new edge goes to
-            nextNode = graph.nodeInDirection(currentNode, dir.value());
-            if (nextNode.has_value()) {
-                // If node was already in section (we have a loop)
-                if (inSection.count(nextNode.value()) > 0) {
-                    // Erase loop
-                    eraseLoop(graph, nextNode.value(), history, inSection);
-                    currentNode = nextNode.value();
-                    continue;
-                }
-                // If node was already in maze
-                if (notInMaze.count(nextNode.value()) == 0) {
-                    // Start new section
-                    removeFromSet(notInMaze, inSection);
-                    inSection.clear();
-                } else {
-                    // If node was not in section or maze
-                    inSection.insert(nextNode.value());
-                    currentNode = nextNode.value();
-                }
-            } else {
-                std::cerr << "Could not get next node!\n";
-                break;
-            }
+        // Add to history
+        history.push_back(dir);
+        // Get node new edge goes to
+        nextNode = graph.nodeInDirection(currentNode, dir);
+        // If node was already in section (we have a loop)
+        if (inSection.count(nextNode) > 0) {
+            // Erase loop
+            eraseLoop(graph, nextNode, history, inSection);
+            currentNode = nextNode;
+            continue;
+        }
+        // If node was already in maze
+        if (notInMaze.count(nextNode) == 0) {
+            // Start new section
+            removeFromSet(notInMaze, inSection);
+            inSection.clear();
         } else {
-            // If can't add edge from currentNode
-            std::cerr << "Could not move from " << currentNode
-                << " islen " << inSection.size() << "\n";
-            break;
+            // If node was not in section or maze
+            inSection.insert(nextNode);
+            currentNode = nextNode;
         }
     }
 }
