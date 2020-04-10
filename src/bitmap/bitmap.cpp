@@ -6,6 +6,8 @@
 #include "bitmap/bitmap.hpp"
 #include "bitmap/image.hpp"
 
+namespace bitmap {
+
 // Number of bytes needed for row (without padding)
 int getRowBytes(uint32_t imageWidth, uint16_t bitsPerPixel) {
     int rowBits = imageWidth * bitsPerPixel;
@@ -159,3 +161,5 @@ void writeBitmapBW(std::string fname, Image<bool>& image, bool verbose = false) 
     file.close();
     std::cout << "Saved to " << fname << "\n";
 }
+
+} // namespace bitmap

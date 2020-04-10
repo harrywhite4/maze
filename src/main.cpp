@@ -19,16 +19,16 @@ void validateDimension(int dimension, std::string name) {
     }
 }
 
-void createMaze(GridGraph& graph) {
-    lerwGraph(graph);
+void createMaze(mazelib::GridGraph& graph) {
+    mazelib::lerwGraph(graph);
 }
 
-void outputMaze(const GridGraph& maze, std::string fname, bool text, bool verbose) {
+void outputMaze(const mazelib::GridGraph& maze, std::string fname, bool text, bool verbose) {
     if (text) {
         std::cout << graphToText(maze);
     } else {
-        Image<bool> image = graphToImage(maze);
-        writeBitmapBW(fname, image, verbose);
+        bitmap::Image<bool> image = graphToImage(maze);
+        bitmap::writeBitmapBW(fname, image, verbose);
     }
 }
 
@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
     validateDimension(height, "height");
 
     // Build data
-    GridGraph graph(height, width);
+    mazelib::GridGraph graph(height, width);
     try {
         createMaze(graph);
     } catch (std::exception& e) {

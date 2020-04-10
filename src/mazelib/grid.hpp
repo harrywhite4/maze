@@ -6,6 +6,8 @@
 #include <random>
 #include <unordered_set>
 
+namespace mazelib {
+
 enum Direction: unsigned int {Left = 0, Right, Up, Down};
 
 class GridGraph {
@@ -70,5 +72,7 @@ class GridGraph {
     Direction addRandomEdge(const std::vector<Direction>& dirs,
                             unsigned int node, std::mt19937& gen);
 };
+
+} // namespace mazelib
 
 #endif  // MAZELIB_GRID_HPP_

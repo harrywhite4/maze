@@ -6,6 +6,8 @@
 
 #include "mazelib/grid.hpp"
 
+namespace mazelib {
+
 GridGraph::GridGraph(unsigned int numRows, unsigned int numColumns) :
     numRows(numRows),
     numColumns(numColumns),
@@ -184,3 +186,5 @@ Direction GridGraph::addRandomEdge(const std::vector<Direction>& possibleDirs,
     addEdge(node, dir);
     return dir;
 }
+
+} // namespace mazelib

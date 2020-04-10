@@ -6,6 +6,8 @@
 
 #include "bitmap/image.hpp"
 
+namespace bitmap {
+
 // 24 bit color
 struct Color24 {
     uint8_t red;
@@ -52,5 +54,7 @@ void writeBitmap24(std::string, Image<Color24>&);
 
 // write black and white bitmap function
 void writeBitmapBW(std::string, Image<bool>&, bool);
+
+} // namespace bitmap
 
 #endif  // BITMAP_BITMAP_HPP_

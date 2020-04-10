@@ -3,6 +3,8 @@
 
 #include <vector>
 
+namespace bitmap {
+
 // Class for storing image data
 template <typename T>
 class Image {
@@ -55,5 +57,7 @@ template <typename T>
 void Image<T>::setValue(unsigned int x, unsigned int y, T value) {
     data[getArrayIndex(x, y)] = value;
 }
+
+} // namespace bitmap
 
 #endif  // BITMAP_IMAGE_HPP_

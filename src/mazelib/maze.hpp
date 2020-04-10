@@ -7,8 +7,12 @@
 #include "mazelib/grid.hpp"
 #include "bitmap/image.hpp"
 
-Image<bool> graphToImage(const GridGraph& graph);
+namespace mazelib {
+
+bitmap::Image<bool> graphToImage(const GridGraph& graph);
 std::string graphToText(const GridGraph& graph);
 void lerwGraph(GridGraph& graph);
+
+} // namespace mazelib
 
 #endif  // MAZELIB_MAZE_HPP_

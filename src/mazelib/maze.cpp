@@ -10,6 +10,8 @@
 #include "mazelib/grid.hpp"
 #include "bitmap/image.hpp"
 
+namespace mazelib {
+
 Direction reverse(Direction dir) {
     Direction reversed;
     switch (dir) {
@@ -29,13 +31,13 @@ Direction reverse(Direction dir) {
     return reversed;
 }
 
-Image<bool> graphToImage(const GridGraph& graph) {
+bitmap::Image<bool> graphToImage(const GridGraph& graph) {
     unsigned int pixelX, pixelY, row, column;
     unsigned int numNodes = graph.getNumNodes();
 
     unsigned int imageRows = (graph.getNumRows() * 2) + 1;
     unsigned int imageColumns = (graph.getNumColumns() * 2) + 1;
-    Image<bool> image(imageColumns, imageRows, true);
+    bitmap::Image<bool> image(imageColumns, imageRows, true);
 
     for (unsigned int n = 0; n < numNodes; ++n) {
         row = graph.rowNumber(n);
@@ -193,3 +195,5 @@ void lerwGraph(GridGraph& graph) {
         }
     }
 }
+
+} // namespace mazelib
