@@ -27,6 +27,9 @@ class GridGraph {
     // Throw exception if node is invalid
     void validateNode(unsigned int node) const;
 
+    // Whether an edge exists for specified vertex
+    bool vertexEdgeExists(unsigned int rowNum, unsigned int colNum, Direction dir) const;
+
  public:
     GridGraph(unsigned int numRows, unsigned int rowWidth);
 
@@ -53,6 +56,9 @@ class GridGraph {
 
     // Get the node in direction dir from start if valid
     unsigned int nodeInDirection(unsigned int start, Direction dir) const;
+
+    // Whether an edge exists within the graph
+    bool edgeExists(unsigned int node, Direction dir) const;
 
     // Returns whether an edge is set
     // This will return false for edges that dont exist within the graph

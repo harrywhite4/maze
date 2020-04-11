@@ -50,29 +50,28 @@ unsigned int GridGraph::nodeNumber(unsigned int rowNum, unsigned int columnNum) 
 }
 
 unsigned int GridGraph::nodeInDirection(unsigned int start, Direction dir) const {
-    validateNode(start);
-
     unsigned int rowNum = rowNumber(start);
-    unsigned int colNum = columnNumber(start);
+    unsigned int columnNum = columnNumber(start);
+
     switch (dir) {
         case Left:
-            if (colNum > 0) {
+            if (vertexEdgeExists(rowNum, columnNum, dir)) {
                 return start-1;
             }
             break;
         case Right:
-            if (colNum < numColumns + 1) {
+            if (vertexEdgeExists(rowNum, columnNum, dir)) {
                 return start+1;
             }
             break;
         case Up:
-            if (rowNum > 0) {
-                return nodeNumber(rowNum - 1, colNum);
+            if (vertexEdgeExists(rowNum, columnNum, dir)) {
+                return nodeNumber(rowNum - 1, columnNum);
             }
             break;
         case Down:
-            if ((rowNum+1) < numRows) {
-                return nodeNumber(rowNum + 1, colNum);
+            if (vertexEdgeExists(rowNum, columnNum, dir)) {
+                return nodeNumber(rowNum + 1, columnNum);
             }
             break;
     }
@@ -83,33 +82,76 @@ unsigned int GridGraph::nodeInDirection(unsigned int start, Direction dir) const
 }
 
 std::optional<unsigned int> GridGraph::edgeIndex(unsigned int node, Direction dir) const {
-    validateNode(node);
-
     unsigned int rowNum = rowNumber(node);
     unsigned int columnNum = columnNumber(node);
+
     switch (dir) {
         case Right:
-            if (columnNum < numColumns - 1) {
+            if (vertexEdgeExists(rowNum, columnNum, dir)) {
                 return node - rowNum;
             }
             break;
         case Left:
-            if (columnNum > 0) {
+            if (vertexEdgeExists(rowNum, columnNum, dir)) {
                 return node - rowNum - 1;
             }
             break;
         case Down:
-            if (rowNum < numRows - 1) {
+            if (vertexEdgeExists(rowNum, columnNum, dir)) {
                 return node;
             }
             break;
         case Up:
-            if (rowNum > 0) {
+            if (vertexEdgeExists(rowNum, columnNum, dir)) {
                 return nodeNumber(rowNum - 1, columnNum);
             }
             break;
     }
     return {};
+}
+
+bool GridGraph::vertexEdgeExists(unsigned int rowNum, unsigned int colNum, Direction dir) const {
+    bool result;
+
+    switch (dir) {
+        case Right:
+            if (colNum < numColumns - 1) {
+                result = true;
+            } else {
+                result = false;
+            }
+            break;
+        case Left:
+            if (colNum > 0) {
+                result = true;
+            } else {
+                result = false;
+            }
+            break;
+        case Down:
+            if (rowNum < numRows - 1) {
+                result = true;
+            } else {
+                result = false;
+            }
+            break;
+        case Up:
+            if (rowNum > 0) {
+                result = true;
+            } else {
+                result = false;
+            }
+            break;
+    }
+    return result;
+}
+
+bool GridGraph::edgeExists(unsigned int node, Direction dir) const {
+    validateNode(node);
+
+    unsigned int rowNum = rowNumber(node);
+    unsigned int columnNum = columnNumber(node);
+    return vertexEdgeExists(rowNum, columnNum, dir);
 }
 
 bool GridGraph::hasEdge(unsigned int node, Direction dir) const {
