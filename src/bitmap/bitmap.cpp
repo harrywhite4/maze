@@ -78,7 +78,7 @@ void writeBitmap24(std::string fname, Image<Color24>& image) {
     // Write Headers
     writeHeaders(file, imageWidth, imageHeight, 24, 0);
     // Write data
-    for (unsigned int y = 0; y < imageHeight; ++y) {
+    for (int y = imageHeight - 1; y >= 0; --y) {
         for (unsigned int x = 0; x < imageWidth; ++x) {
             auto c = image.getValue(x, y);
             // Write colors
@@ -117,15 +117,14 @@ void writeBitmapBW(std::string fname, Image<bool>& image, bool verbose = false) 
         std::cout << "Wrote " << headerBytes << " header bytes\n";
     }
     // Write color table
-    file << static_cast<char>(0x00) << static_cast<char>(0x00)
-         << static_cast<char>(0x00) << static_cast<char>(0x00);
     file << static_cast<char>(0xff) << static_cast<char>(0xff)
          << static_cast<char>(0xff) << static_cast<char>(0x00);
+    file << static_cast<char>(0x00) << static_cast<char>(0x00)
+         << static_cast<char>(0x00) << static_cast<char>(0x00);
     // Write data
     uint8_t toWrite = 0;
     int bitPos = 0, bytesWritten = 0;
-    // TODO Write in correct vertical order
-    for (unsigned int y = 0; y < imageHeight; ++y) {
+    for (int y = imageHeight - 1; y >= 0; --y) {
         // Reset at start of row
         toWrite = 0;
         bitPos = 0;
