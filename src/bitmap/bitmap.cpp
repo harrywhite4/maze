@@ -49,7 +49,7 @@ FileHeader::FileHeader(uint32_t imageSize, unsigned int colorTableEntries) :
 }
 
 unsigned int writeHeaders(std::ofstream& file, uint32_t imageWidth,
-        uint32_t imageHeight, uint16_t bitsPerPixel, int colorTableEntries) {
+                          uint32_t imageHeight, uint16_t bitsPerPixel, int colorTableEntries) {
     // Setup headers
     DIBHeader dhead(imageWidth, imageHeight, bitsPerPixel);
     FileHeader fhead(dhead.imageSize, colorTableEntries);
@@ -65,17 +65,15 @@ unsigned int writeHeaders(std::ofstream& file, uint32_t imageWidth,
 
 // Write 24 bit color data to bitmap file (adding padding if neccesary)
 void writeBitmap24(std::string fname, Image<Color24>& image) {
-    // Get sizes
     unsigned int imageHeight = image.getNumRows();
     unsigned int imageWidth = image.getNumColumns();
-    // Determine padding
     int paddingBytes = getPaddingBytes(imageWidth, 24);
 
     // Write to file
     std::ofstream file;
     // Open file for binary output
     file.open(fname, std::fstream::out | std::fstream::binary);
-    // Write Headers
+
     writeHeaders(file, imageWidth, imageHeight, 24, 0);
     // Write data
     for (int y = imageHeight - 1; y >= 0; --y) {
@@ -89,12 +87,11 @@ void writeBitmap24(std::string fname, Image<Color24>& image) {
             file << 0;
         }
     }
-    // Close file
     file.close();
 }
 
+// Write 1 bit color data to bitmap file with padding
 void writeBitmapBW(std::string fname, Image<bool>& image, bool verbose = false) {
-    // Get sizes
     unsigned int imageHeight = image.getNumRows();
     unsigned int imageWidth = image.getNumColumns();
     if (verbose) {
@@ -107,11 +104,10 @@ void writeBitmapBW(std::string fname, Image<bool>& image, bool verbose = false) 
         std::cout << "Padding: " << paddingBytes << "\n";
     }
 
-    // Write to file
     std::ofstream file;
     // Open file for binary output
     file.open(fname, std::fstream::out | std::fstream::binary);
-    // Write Headers
+
     auto headerBytes = writeHeaders(file, imageWidth, imageHeight, 1, 2);
     if (verbose) {
         std::cout << "Wrote " << headerBytes << " header bytes\n";
@@ -136,6 +132,7 @@ void writeBitmapBW(std::string fname, Image<bool>& image, bool verbose = false) 
                 toWrite |= (0x01 << (7 - bitPos));
             }
             ++bitPos;
+            // If toWrite is full, write to file
             if (bitPos == 8) {
                 file << toWrite;
                 ++bytesWritten;
@@ -148,15 +145,15 @@ void writeBitmapBW(std::string fname, Image<bool>& image, bool verbose = false) 
             file << toWrite;
             ++bytesWritten;
         }
-        // Write padding
+        // Write padding bytes to row
         for (int i = 0; i < paddingBytes; ++i) {
-            file << 0;
+            file << static_cast<char>(0x00);
         }
     }
     if (verbose) {
         std::cout << "Wrote " << bytesWritten << " data bytes\n";
     }
-    // Close file
+
     file.close();
     std::cout << "Saved to " << fname << "\n";
 }
