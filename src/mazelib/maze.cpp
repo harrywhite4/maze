@@ -32,47 +32,52 @@ Direction reverse(Direction dir) {
 }
 
 bitmap::Image<bool> graphToImage(const GridGraph& graph) {
-    unsigned int topleftX, topleftY, x, y, row, column;
+    unsigned int topleftX, topleftY, x, y, t, row, column;
+    /* unsigned int x, y, t; */
     unsigned int numNodes = graph.getNumNodes();
+    unsigned int numColumns = graph.getNumColumns();
+    unsigned int numRows = graph.getNumRows();
     // Space for cells
     const unsigned int spacing = 2;
     // Thickness of cell walls
     const unsigned int thickness = 1;
 
-    unsigned int imageRows = (graph.getNumRows() * spacing) +
-                             ((graph.getNumRows() + 1) * thickness);
-    unsigned int imageColumns = (graph.getNumColumns() * spacing) +
-                                ((graph.getNumColumns() + 1) * thickness);
+    unsigned int imageRows = (numRows * spacing) + ((numRows + 1) * thickness);
+    unsigned int imageColumns = (numColumns * spacing) + ((numColumns + 1) * thickness);
     bitmap::Image<bool> image(imageColumns, imageRows, false);
 
+    // Draw top and bottom boundary
+    for (x = 0; x < imageColumns; ++x) {
+        for (t = 0; t < thickness; ++t) {
+            image.setValue(x, t, true);
+            image.setValue(x, imageRows - 1 - t, true);
+        }
+    }
+    // Draw left and right boundary
+    for (y = 0; y < imageRows; ++y) {
+        for (t = 0; t < thickness; ++t) {
+            image.setValue(t, y, true);
+            image.setValue(imageColumns - 1 - t, y, true);
+        }
+    }
+
+    // Draw inner walls
     for (unsigned int n = 0; n < numNodes; ++n) {
         row = graph.rowNumber(n);
         column = graph.columnNumber(n);
         topleftX = column * (thickness + spacing);
         topleftY = row * (thickness + spacing);
         image.setValue(topleftX, topleftY, true);
-        if (!graph.hasEdge(n, Up)) {
-            for (x = 0; x < (thickness * 2 + spacing); ++x) {
-                for (y = 0; y < thickness; ++y) {
-                    image.setValue(topleftX + x, topleftY + y, true);
-                }
-            }
-        }
-        if (!graph.hasEdge(n, Down)) {
+        // If not last row and there is not down edge
+        if (row < numRows - 1 && !graph.hasEdge(n, Down)) {
             for (x = 0; x < (thickness * 2 + spacing); ++x) {
                 for (y = 0; y < thickness; ++y) {
                     image.setValue(topleftX + x, topleftY + spacing + thickness + y, true);
                 }
             }
         }
-        if (!graph.hasEdge(n, Left)) {
-            for (x = 0; x < thickness; ++x) {
-                for (y = 0; y < (thickness * 2 + spacing); ++y) {
-                    image.setValue(topleftX + x, topleftY + y, true);
-                }
-            }
-        }
-        if (!graph.hasEdge(n, Right)) {
+        // If not last column and there is no right edge
+        if (column < numColumns - 1 && !graph.hasEdge(n, Right)) {
             for (x = 0; x < thickness; ++x) {
                 for (y = 0; y < (thickness * 2 + spacing); ++y) {
                     image.setValue(topleftX + spacing + thickness + x, topleftY + y, true);
