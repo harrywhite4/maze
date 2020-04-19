@@ -38,9 +38,9 @@ bitmap::Image<bool> graphToImage(const GridGraph& graph) {
     unsigned int numColumns = graph.getNumColumns();
     unsigned int numRows = graph.getNumRows();
     // Space for cells
-    const unsigned int spacing = 2;
+    const unsigned int spacing = 8;
     // Thickness of cell walls
-    const unsigned int thickness = 1;
+    const unsigned int thickness = 2;
 
     unsigned int imageRows = (numRows * spacing) + ((numRows + 1) * thickness);
     unsigned int imageColumns = (numColumns * spacing) + ((numColumns + 1) * thickness);
