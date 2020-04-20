@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
 
         fname = result["output"].as<std::string>();
         width = result["width"].as<int>();
-        height = result["width"].as<int>();
+        height = result["height"].as<int>();
         help = result["help"].as<bool>();
         text = result["text"].as<bool>();
         dfs = result["dfs"].as<bool>();
