@@ -19,8 +19,12 @@ void validateDimension(int dimension, std::string name) {
     }
 }
 
-void createMaze(mazelib::GridGraph& graph) {
-    mazelib::lerwGraph(graph);
+void createMaze(mazelib::GridGraph& graph, bool dfs) {
+    if (dfs) {
+        mazelib::dfsGraph(graph);
+    } else {
+        mazelib::lerwGraph(graph);
+    }
 }
 
 void outputMaze(const mazelib::GridGraph& maze, std::string fname, bool text, bool verbose) {
@@ -40,15 +44,15 @@ int main(int argc, char *argv[]) {
         ("w,width", "Maze width", cxxopts::value<int>()->default_value("50"))
         ("h,height", "Maze height", cxxopts::value<int>()->default_value("50"))
         ("text", "Output maze as text to stdout", cxxopts::value<bool>())
+        ("dfs", "Use dfs to create maze", cxxopts::value<bool>())
         ("verbose", "Print detailed output", cxxopts::value<bool>())
         ("version", "Print version information", cxxopts::value<bool>())
-        ("help", "Print help", cxxopts::value<bool>())
-        ;
+        ("help", "Print help", cxxopts::value<bool>());
 
     // Variables
     std::string fname;
     int width, height;
-    bool help, text, verbose, version;
+    bool help, text, dfs, verbose, version;
     // Parse arguments
     try {
         cxxopts::ParseResult result = options.parse(argc, argv);
@@ -58,6 +62,7 @@ int main(int argc, char *argv[]) {
         height = result["width"].as<int>();
         help = result["help"].as<bool>();
         text = result["text"].as<bool>();
+        dfs = result["dfs"].as<bool>();
         verbose = result["verbose"].as<bool>();
         version = result["version"].as<bool>();
     } catch (cxxopts::OptionParseException& e) {
@@ -83,7 +88,7 @@ int main(int argc, char *argv[]) {
     // Build data
     mazelib::GridGraph graph(height, width);
     try {
-        createMaze(graph);
+        createMaze(graph, dfs);
     } catch (std::exception& e) {
         std::cerr << "An error occurred while creating maze :(\n";
         std::cerr << e.what() << "\n";

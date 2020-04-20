@@ -12,6 +12,7 @@ namespace mazelib {
 bitmap::Image<bool> graphToImage(const GridGraph& graph);
 std::string graphToText(const GridGraph& graph);
 void lerwGraph(GridGraph& graph);
+void dfsGraph(GridGraph& graph);
 
 } // namespace mazelib
 

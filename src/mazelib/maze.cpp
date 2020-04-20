@@ -1,14 +1,15 @@
+#include <deque>
+#include <iostream>
 #include <random>
+#include <stack>
+#include <stdexcept>
+#include <string>
 #include <unordered_set>
 #include <vector>
-#include <iostream>
-#include <deque>
-#include <string>
-#include <stdexcept>
 
-#include "mazelib/maze.hpp"
-#include "mazelib/grid.hpp"
 #include "bitmap/image.hpp"
+#include "mazelib/grid.hpp"
+#include "mazelib/maze.hpp"
 
 namespace mazelib {
 
@@ -225,6 +226,48 @@ void lerwGraph(GridGraph& graph) {
             // If node was not in section or maze
             inSection.insert(nextNode);
             currentNode = nextNode;
+        }
+    }
+}
+
+void dfsGraph(GridGraph& graph) {
+    // Setup random number generator
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    // Variables
+    unsigned int currentNode = 0;
+    Direction lastDir;
+    // Setup data structures
+    std::unordered_set<unsigned int> visited;
+    std::stack<unsigned int> nodePath;
+    std::vector<Direction> possibleDirs;
+    std::vector<Direction> validDirs;
+
+    visited.insert(currentNode);
+
+    while (visited.size() < graph.getNumNodes()) {
+        graph.getPossibleDirs(possibleDirs, currentNode);
+        validDirs.clear();
+        for (auto dir : possibleDirs) {
+            // If node in this direction is unvisited, add to valid
+            if (visited.count(graph.nodeInDirection(currentNode, dir)) == 0) {
+                validDirs.push_back(dir);
+            }
+        }
+        if (!validDirs.empty()) {
+            lastDir = graph.addRandomEdge(validDirs, currentNode, gen);
+            // Insert previous node into path
+            nodePath.push(currentNode);
+            // set current node add to visited
+            currentNode = graph.nodeInDirection(currentNode, lastDir);
+            visited.insert(currentNode);
+        } else {
+            if (!nodePath.empty()) {
+                currentNode = nodePath.top();
+                nodePath.pop();
+            } else {
+                throw std::out_of_range("node path is empty");
+            }
         }
     }
 }

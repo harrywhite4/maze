@@ -25,20 +25,26 @@ void validateSpanning(const mazelib::GridGraph& graph) {
     ASSERT_EQ(nodes.size(), numNodes);
 }
 
-TEST(MazeTest, GenerateSmallMaze) {
+TEST(MazeTest, GenerateSmallLerwMaze) {
     mazelib::GridGraph graph(10, 10);
     mazelib::lerwGraph(graph);
     validateSpanning(graph);
 }
 
-TEST(MazeTest, GenerateRectangularMaze) {
+TEST(MazeTest, GenerateRectangularLerwMaze) {
     mazelib::GridGraph graph(10, 30);
     mazelib::lerwGraph(graph);
     validateSpanning(graph);
 }
 
-TEST(MazeTest, GenerateBigMaze) {
-    mazelib::GridGraph graph(50, 50);
-    mazelib::lerwGraph(graph);
+TEST(MazeTest, GenerateSmallDfsMaze) {
+    mazelib::GridGraph graph(10, 10);
+    mazelib::dfsGraph(graph);
+    validateSpanning(graph);
+}
+
+TEST(MazeTest, GenerateRectagularDfsMaze) {
+    mazelib::GridGraph graph(10, 30);
+    mazelib::dfsGraph(graph);
     validateSpanning(graph);
 }
