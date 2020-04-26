@@ -7,11 +7,13 @@
 #include <unordered_set>
 #include <vector>
 
+#include "bitmap/bitmap.hpp"
 #include "bitmap/image.hpp"
 #include "mazelib/grid.hpp"
 #include "mazelib/maze.hpp"
 
 namespace mazelib {
+
 
 Direction reverse(Direction dir) {
     Direction reversed;
@@ -271,5 +273,28 @@ void dfsGraph(GridGraph& graph) {
         }
     }
 }
+
+void createMaze(GridGraph& graph, MazeType type) {
+    switch (type) {
+        case Dfs:
+            dfsGraph(graph);
+            break;
+        case Wilsons:
+            lerwGraph(graph);
+            break;
+    }
+}
+
+void outputMaze(const GridGraph& maze, OutputFormat format, std::string fname, bool verbose) {
+    switch (format) {
+        case Text:
+            std::cout << graphToText(maze);
+            break;
+        case Bitmap:
+            bitmap::Image<bool> image = graphToImage(maze);
+            bitmap::writeBitmapBW(fname, image, verbose);
+    }
+}
+
 
 } // namespace mazelib

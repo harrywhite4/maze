@@ -1,38 +1,37 @@
+#include <exception>
+#include <iostream>
+#include <map>
+#include <random>
 #include <string>
 #include <vector>
-#include <iostream>
-#include <random>
-#include <exception>
 
 #include "MazeConfig.h"
-#include "bitmap/bitmap.hpp"
-#include "bitmap/image.hpp"
 #include "mazelib/grid.hpp"
 #include "mazelib/maze.hpp"
 #include "cxxopts.hpp"
+
+// Get keys of map as a string of options in brackets
+template <typename T>
+std::string getOptionsList(std::map<std::string, T> mapping) {
+    std::string opts = "[";
+    bool firstOpt = true;
+    for (auto item : mapping) {
+        if (!firstOpt) {
+            opts += ", ";
+        } else {
+            firstOpt = false;
+        }
+        opts += item.first;
+    }
+    opts += "]";
+    return opts;
+}
 
 // validate dimension, exiting if not valid
 void validateDimension(int dimension, std::string name) {
     if (dimension <= 0) {
         std::cerr << name << " must be a positive number\n";
         exit(EXIT_FAILURE);
-    }
-}
-
-void createMaze(mazelib::GridGraph& graph, bool dfs) {
-    if (dfs) {
-        mazelib::dfsGraph(graph);
-    } else {
-        mazelib::lerwGraph(graph);
-    }
-}
-
-void outputMaze(const mazelib::GridGraph& maze, std::string fname, bool text, bool verbose) {
-    if (text) {
-        std::cout << graphToText(maze);
-    } else {
-        bitmap::Image<bool> image = graphToImage(maze);
-        bitmap::writeBitmapBW(fname, image, verbose);
     }
 }
 
@@ -43,16 +42,18 @@ int main(int argc, char *argv[]) {
         ("o,output", "Output filename", cxxopts::value<std::string>()->default_value("maze.bmp"))
         ("w,width", "Maze width", cxxopts::value<int>()->default_value("50"))
         ("h,height", "Maze height", cxxopts::value<int>()->default_value("50"))
-        ("text", "Output maze as text to stdout", cxxopts::value<bool>())
-        ("dfs", "Use dfs to create maze", cxxopts::value<bool>())
+        ("f,format", "Output format " + getOptionsList(mazelib::outputFormatMap),
+         cxxopts::value<std::string>()->default_value("text"))
+        ("t,type", "Maze type " + getOptionsList(mazelib::mazeTypeMap),
+         cxxopts::value<std::string>()->default_value("wilsons"))
         ("verbose", "Print detailed output", cxxopts::value<bool>())
         ("version", "Print version information", cxxopts::value<bool>())
         ("help", "Print help", cxxopts::value<bool>());
 
     // Variables
-    std::string fname;
+    std::string fname, formatText, typeText;
     int width, height;
-    bool help, text, dfs, verbose, version;
+    bool help, verbose, version;
     // Parse arguments
     try {
         cxxopts::ParseResult result = options.parse(argc, argv);
@@ -60,15 +61,19 @@ int main(int argc, char *argv[]) {
         fname = result["output"].as<std::string>();
         width = result["width"].as<int>();
         height = result["height"].as<int>();
-        help = result["help"].as<bool>();
-        text = result["text"].as<bool>();
-        dfs = result["dfs"].as<bool>();
+        formatText = result["format"].as<std::string>();
+        typeText = result["type"].as<std::string>();
         verbose = result["verbose"].as<bool>();
         version = result["version"].as<bool>();
+        help = result["help"].as<bool>();
     } catch (cxxopts::OptionParseException& e) {
         std::cerr << e.what() << std::endl;
         exit(EXIT_FAILURE);
     }
+
+    // Get enums from mappings
+    mazelib::MazeType type = mazelib::mazeTypeMap.at(typeText);
+    mazelib::OutputFormat format = mazelib::outputFormatMap.at(formatText);
 
     // Show help
     if (help) {
@@ -88,7 +93,7 @@ int main(int argc, char *argv[]) {
     // Build data
     mazelib::GridGraph graph(height, width);
     try {
-        createMaze(graph, dfs);
+        mazelib::createMaze(graph, type);
     } catch (std::exception& e) {
         std::cerr << "An error occurred while creating maze :(\n";
         std::cerr << e.what() << "\n";
@@ -96,7 +101,7 @@ int main(int argc, char *argv[]) {
     }
 
     try {
-        outputMaze(graph, fname, text, verbose);
+        outputMaze(graph, format, fname, verbose);
     } catch (std::exception& e) {
         std::cerr << "An error occurred while outputting maze :(\n";
         std::cerr << e.what() << "\n";
