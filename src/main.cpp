@@ -35,7 +35,8 @@ void validateDimension(int dimension, std::string name) {
     }
 }
 
-int main(int argc, char *argv[]) {
+// Parse command line arguments
+cxxopts::ParseResult parseArgs(int argc, char *argv[]) {
     // Argument definition
     cxxopts::Options options("maze", MAZE_DESCRIPTION);
     options.add_options()
@@ -50,63 +51,55 @@ int main(int argc, char *argv[]) {
         ("version", "Print version information", cxxopts::value<bool>())
         ("help", "Print help", cxxopts::value<bool>());
 
-    // Variables
-    std::string fname, formatText, typeText;
-    int width, height;
-    bool help, verbose, version;
-    // Parse arguments
-    try {
-        cxxopts::ParseResult result = options.parse(argc, argv);
+    auto result = options.parse(argc, argv);
 
-        fname = result["output"].as<std::string>();
-        width = result["width"].as<int>();
-        height = result["height"].as<int>();
-        formatText = result["format"].as<std::string>();
-        typeText = result["type"].as<std::string>();
-        verbose = result["verbose"].as<bool>();
-        version = result["version"].as<bool>();
-        help = result["help"].as<bool>();
-    } catch (cxxopts::OptionParseException& e) {
-        std::cerr << e.what() << std::endl;
-        exit(EXIT_FAILURE);
-    }
-
-    // Get enums from mappings
-    mazelib::MazeType type = mazelib::mazeTypeMap.at(typeText);
-    mazelib::OutputFormat format = mazelib::outputFormatMap.at(formatText);
-
-    // Show help
+    bool help = result["help"].as<bool>();
     if (help) {
         std::cout << options.help() << "\n";
         exit(EXIT_SUCCESS);
     }
-    // Show version info
+
+    bool version = result["version"].as<bool>();
     if (version) {
         std::cout << "maze " << MAZE_VERSION << "\n";
         exit(EXIT_SUCCESS);
     }
 
-    // Validation
+    return result;
+}
+
+// Parse arguments and output maze
+void maze(cxxopts::ParseResult args) {
+    int width = args["width"].as<int>();
     validateDimension(width, "width");
+    int height = args["height"].as<int>();
     validateDimension(height, "height");
 
-    // Build data
-    mazelib::GridGraph graph(height, width);
-    try {
-        mazelib::createMaze(graph, type);
-    } catch (std::exception& e) {
-        std::cerr << "An error occurred while creating maze :(\n";
-        std::cerr << e.what() << "\n";
-        exit(EXIT_FAILURE);
-    }
+    // Get enums from mappings
+    auto formatText = args["format"].as<std::string>();
+    auto typeText = args["type"].as<std::string>();
+    mazelib::MazeType type = mazelib::mazeTypeMap.at(typeText);
+    mazelib::OutputFormat format = mazelib::outputFormatMap.at(formatText);
 
-    try {
-        outputMaze(graph, format, fname, verbose);
-    } catch (std::exception& e) {
-        std::cerr << "An error occurred while outputting maze :(\n";
-        std::cerr << e.what() << "\n";
-        exit(EXIT_FAILURE);
-    }
+    mazelib::GridGraph graph(height, width);
+    mazelib::createMaze(graph, type);
+
+    auto fname = args["output"].as<std::string>();
+    auto verbose = args["verbose"].as<bool>();
+    outputMaze(graph, format, fname, verbose);
 
     exit(EXIT_SUCCESS);
+}
+
+int main(int argc, char *argv[]) {
+    try {
+        auto args = parseArgs(argc, argv);
+        maze(args);
+    } catch (cxxopts::OptionParseException& e) {
+        std::cerr << e.what() << "\n";
+        exit(EXIT_FAILURE);
+    } catch (std::exception& e) {
+        std::cerr << "An error has occurred\n";
+        exit(EXIT_FAILURE);
+    }
 }
