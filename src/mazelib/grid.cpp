@@ -157,7 +157,7 @@ bool GridGraph::edgeExists(int node, Direction dir) const {
 bool GridGraph::hasEdge(int node, Direction dir) const {
     validateNode(node);
 
-    auto index = edgeIndex(node, dir);
+    std::optional<int> index = edgeIndex(node, dir);
     if (index.has_value()) {
         if (dir == Left || dir == Right) {
             return horEdges[index.value()];
@@ -196,7 +196,7 @@ void GridGraph::removeEdge(int node, Direction dir) {
 
 void GridGraph::getPossibleDirs(std::vector<Direction>& possibleDirs, int node) {
     possibleDirs.clear();
-    auto row = rowNumber(node);
+
     auto column = columnNumber(node);
     if (column > 0 && !hasEdge(node, Left)) {
         possibleDirs.push_back(Left);
@@ -204,6 +204,8 @@ void GridGraph::getPossibleDirs(std::vector<Direction>& possibleDirs, int node) 
     if (column < numColumns-1 && !hasEdge(node, Right)) {
         possibleDirs.push_back(Right);
     }
+
+    auto row = rowNumber(node);
     if (row > 0 && !hasEdge(node, Up)) {
         possibleDirs.push_back(Up);
     }

@@ -65,17 +65,15 @@ unsigned int writeHeaders(std::ofstream& file, uint32_t imageWidth,
 
 // Write 24 bit color data to bitmap file (adding padding if neccesary)
 void writeBitmap24(std::string fname, Image<Color24>& image) {
-    unsigned int imageHeight = image.getNumRows();
-    unsigned int imageWidth = image.getNumColumns();
-    int paddingBytes = getPaddingBytes(imageWidth, 24);
-
-    // Write to file
     std::ofstream file;
     // Open file for binary output
     file.open(fname, std::fstream::out | std::fstream::binary);
 
+    unsigned int imageHeight = image.getNumRows();
+    unsigned int imageWidth = image.getNumColumns();
     writeHeaders(file, imageWidth, imageHeight, 24, 0);
     // Write data
+    int paddingBytes = getPaddingBytes(imageWidth, 24);
     for (int y = imageHeight - 1; y >= 0; --y) {
         for (unsigned int x = 0; x < imageWidth; ++x) {
             auto c = image.getValue(x, y);
@@ -84,7 +82,7 @@ void writeBitmap24(std::string fname, Image<Color24>& image) {
         }
         // Write padding at end of a row
         for (int i = 0; i < paddingBytes; ++i) {
-            file << 0;
+            file << static_cast<char>(0x00);
         }
     }
     file.close();
@@ -92,34 +90,35 @@ void writeBitmap24(std::string fname, Image<Color24>& image) {
 
 // Write 1 bit color data to bitmap file with padding
 void writeBitmapBW(std::string fname, Image<bool>& image, bool verbose = false) {
+    std::ofstream file;
+    // Open file for binary output
+    file.open(fname, std::fstream::out | std::fstream::binary);
+
     unsigned int imageHeight = image.getNumRows();
     unsigned int imageWidth = image.getNumColumns();
     if (verbose) {
         std::cout << "Width: " << imageWidth << "\n";
         std::cout << "Height: " << imageHeight << "\n";
     }
-
-    int paddingBytes = getPaddingBytes(imageWidth, 1);
-    if (verbose) {
-        std::cout << "Padding: " << paddingBytes << "\n";
-    }
-
-    std::ofstream file;
-    // Open file for binary output
-    file.open(fname, std::fstream::out | std::fstream::binary);
-
     auto headerBytes = writeHeaders(file, imageWidth, imageHeight, 1, 2);
     if (verbose) {
         std::cout << "Wrote " << headerBytes << " header bytes\n";
     }
+
     // Write color table
     file << static_cast<char>(0xff) << static_cast<char>(0xff)
          << static_cast<char>(0xff) << static_cast<char>(0x00);
     file << static_cast<char>(0x00) << static_cast<char>(0x00)
          << static_cast<char>(0x00) << static_cast<char>(0x00);
+
     // Write data
+    int paddingBytes = getPaddingBytes(imageWidth, 1);
+    if (verbose) {
+        std::cout << "Padding: " << paddingBytes << "\n";
+    }
     uint8_t toWrite = 0;
-    int bitPos = 0, bytesWritten = 0;
+    int bitPos = 0;
+    int bytesWritten = 0;
     for (int y = imageHeight - 1; y >= 0; --y) {
         // Reset at start of row
         toWrite = 0;
