@@ -12,6 +12,9 @@ configure_file(src/MazeConfig.h.in src/MazeConfig.h)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# Output compile_commands.json
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Conpile options
 if (MSVC)
     add_compile_options(/W4 /WX)
