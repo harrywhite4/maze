@@ -8,50 +8,50 @@
 
 namespace mazelib {
 
-GridGraph::GridGraph(unsigned int numRows, unsigned int numColumns) :
+GridGraph::GridGraph(int numRows, int numColumns) :
     numRows(numRows),
     numColumns(numColumns),
     horEdges((numColumns - 1) * numRows, false),
     vertEdges(numColumns * (numRows - 1), false) {
 }
 
-bool GridGraph::validNode(unsigned int node) const {
-    return (node < getNumNodes());
+bool GridGraph::validNode(int node) const {
+    return (node >= 0 && node < getNumNodes());
 }
 
-void GridGraph::validateNode(unsigned int node) const {
+void GridGraph::validateNode(int node) const {
     if (!validNode(node)) {
         throw std::invalid_argument("Invalid node " + std::to_string(node));
     }
 }
 
-unsigned int GridGraph::getNumNodes() const {
+int GridGraph::getNumNodes() const {
     return numRows * numColumns;
 }
 
-unsigned int GridGraph::getNumRows() const {
+int GridGraph::getNumRows() const {
     return numRows;
 }
 
-unsigned int GridGraph::getNumColumns() const {
+int GridGraph::getNumColumns() const {
     return numColumns;
 }
 
-unsigned int GridGraph::rowNumber(unsigned int node) const {
+int GridGraph::rowNumber(int node) const {
     return node / numColumns;
 }
 
-unsigned int GridGraph::columnNumber(unsigned int node) const {
+int GridGraph::columnNumber(int node) const {
     return node % numColumns;
 }
 
-unsigned int GridGraph::nodeNumber(unsigned int rowNum, unsigned int columnNum) const {
+int GridGraph::nodeNumber(int rowNum, int columnNum) const {
     return (rowNum * numColumns) + columnNum;
 }
 
-unsigned int GridGraph::nodeInDirection(unsigned int start, Direction dir) const {
-    unsigned int rowNum = rowNumber(start);
-    unsigned int columnNum = columnNumber(start);
+int GridGraph::nodeInDirection(int start, Direction dir) const {
+    int rowNum = rowNumber(start);
+    int columnNum = columnNumber(start);
 
     switch (dir) {
         case Left:
@@ -81,9 +81,9 @@ unsigned int GridGraph::nodeInDirection(unsigned int start, Direction dir) const
     );
 }
 
-std::optional<unsigned int> GridGraph::edgeIndex(unsigned int node, Direction dir) const {
-    unsigned int rowNum = rowNumber(node);
-    unsigned int columnNum = columnNumber(node);
+std::optional<int> GridGraph::edgeIndex(int node, Direction dir) const {
+    int rowNum = rowNumber(node);
+    int columnNum = columnNumber(node);
 
     switch (dir) {
         case Right:
@@ -110,7 +110,7 @@ std::optional<unsigned int> GridGraph::edgeIndex(unsigned int node, Direction di
     return {};
 }
 
-bool GridGraph::vertexEdgeExists(unsigned int rowNum, unsigned int colNum, Direction dir) const {
+bool GridGraph::vertexEdgeExists(int rowNum, int colNum, Direction dir) const {
     bool result;
 
     switch (dir) {
@@ -146,15 +146,15 @@ bool GridGraph::vertexEdgeExists(unsigned int rowNum, unsigned int colNum, Direc
     return result;
 }
 
-bool GridGraph::edgeExists(unsigned int node, Direction dir) const {
+bool GridGraph::edgeExists(int node, Direction dir) const {
     validateNode(node);
 
-    unsigned int rowNum = rowNumber(node);
-    unsigned int columnNum = columnNumber(node);
+    int rowNum = rowNumber(node);
+    int columnNum = columnNumber(node);
     return vertexEdgeExists(rowNum, columnNum, dir);
 }
 
-bool GridGraph::hasEdge(unsigned int node, Direction dir) const {
+bool GridGraph::hasEdge(int node, Direction dir) const {
     validateNode(node);
 
     auto index = edgeIndex(node, dir);
@@ -168,7 +168,7 @@ bool GridGraph::hasEdge(unsigned int node, Direction dir) const {
     return false;
 }
 
-void GridGraph::setEdge(unsigned int node, Direction dir, bool value) {
+void GridGraph::setEdge(int node, Direction dir, bool value) {
     validateNode(node);
 
     auto index = edgeIndex(node, dir);
@@ -186,15 +186,15 @@ void GridGraph::setEdge(unsigned int node, Direction dir, bool value) {
     }
 }
 
-void GridGraph::addEdge(unsigned int node, Direction dir) {
+void GridGraph::addEdge(int node, Direction dir) {
     setEdge(node, dir, true);
 }
 
-void GridGraph::removeEdge(unsigned int node, Direction dir) {
+void GridGraph::removeEdge(int node, Direction dir) {
     setEdge(node, dir, false);
 }
 
-void GridGraph::getPossibleDirs(std::vector<Direction>& possibleDirs, unsigned int node) {
+void GridGraph::getPossibleDirs(std::vector<Direction>& possibleDirs, int node) {
     possibleDirs.clear();
     auto row = rowNumber(node);
     auto column = columnNumber(node);
@@ -213,7 +213,7 @@ void GridGraph::getPossibleDirs(std::vector<Direction>& possibleDirs, unsigned i
 }
 
 Direction GridGraph::addRandomEdge(const std::vector<Direction>& possibleDirs,
-                                   unsigned int node, std::mt19937& gen) {
+                                   int node, std::mt19937& gen) {
     if (possibleDirs.empty()) {
         throw std::invalid_argument("Trying to add random edge with no possible directions");
     }

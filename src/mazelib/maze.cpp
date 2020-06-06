@@ -35,18 +35,18 @@ Direction reverse(Direction dir) {
 }
 
 bitmap::Image<bool> graphToImage(const GridGraph& graph) {
-    unsigned int topleftX, topleftY, x, y, t, row, column;
-    /* unsigned int x, y, t; */
-    unsigned int numNodes = graph.getNumNodes();
-    unsigned int numColumns = graph.getNumColumns();
-    unsigned int numRows = graph.getNumRows();
+    int topleftX, topleftY, x, y, t, row, column;
+    /* int x, y, t; */
+    int numNodes = graph.getNumNodes();
+    int numColumns = graph.getNumColumns();
+    int numRows = graph.getNumRows();
     // Space for cells
-    const unsigned int spacing = 8;
+    const int spacing = 8;
     // Thickness of cell walls
-    const unsigned int thickness = 2;
+    const int thickness = 2;
 
-    unsigned int imageRows = (numRows * spacing) + ((numRows + 1) * thickness);
-    unsigned int imageColumns = (numColumns * spacing) + ((numColumns + 1) * thickness);
+    int imageRows = (numRows * spacing) + ((numRows + 1) * thickness);
+    int imageColumns = (numColumns * spacing) + ((numColumns + 1) * thickness);
     bitmap::Image<bool> image(imageColumns, imageRows, false);
 
     // Draw top and bottom boundary
@@ -65,7 +65,7 @@ bitmap::Image<bool> graphToImage(const GridGraph& graph) {
     }
 
     // Draw inner walls
-    for (unsigned int n = 0; n < numNodes; ++n) {
+    for (int n = 0; n < numNodes; ++n) {
         row = graph.rowNumber(n);
         column = graph.columnNumber(n);
         topleftX = column * (thickness + spacing);
@@ -93,20 +93,20 @@ bitmap::Image<bool> graphToImage(const GridGraph& graph) {
 
 std::string graphToText(const GridGraph& graph) {
     std::string s;
-    unsigned int numRows = graph.getNumRows();
-    unsigned int numColumns = graph.getNumColumns();
+    int numRows = graph.getNumRows();
+    int numColumns = graph.getNumColumns();
 
     // Add top row
-    for (unsigned int i = 0; i < numColumns; ++i) {
+    for (int i = 0; i < numColumns; ++i) {
         s.append("+--");
     }
     s.append("+\n");
 
     // Write rows
-    for (unsigned int row = 0; row < numRows; ++row) {
+    for (int row = 0; row < numRows; ++row) {
         std::string rowTop = "|", rowBottom = "+";
-        for (unsigned int column = 0; column < numColumns; ++column) {
-            unsigned int nodeNum = graph.nodeNumber(row, column);
+        for (int column = 0; column < numColumns; ++column) {
+            int nodeNum = graph.nodeNumber(row, column);
             // Add to top
             if (graph.hasEdge(nodeNum, Right)) {
                 rowTop.append("   ");
@@ -130,8 +130,7 @@ std::string graphToText(const GridGraph& graph) {
     return s;
 }
 
-unsigned int getNewNode(unsigned int numNodes,
-                        std::unordered_set<unsigned int> notInSet) {
+int getNewNode(int numNodes, std::unordered_set<int> notInSet) {
     // Get next node not in maze if there is one
     if (!notInSet.empty()) {
         return *notInSet.begin();
@@ -139,17 +138,17 @@ unsigned int getNewNode(unsigned int numNodes,
     throw std::invalid_argument("Attempting to get new node from empty set");
 }
 
-void removeFromSet(std::unordered_set<unsigned int>& from,
-                   const std::unordered_set<unsigned int>& removals) {
+void removeFromSet(std::unordered_set<int>& from,
+                   const std::unordered_set<int>& removals) {
     for (auto n : removals) {
         from.erase(n);
     }
 }
 
-void eraseLoop(GridGraph& graph, unsigned int loopNode,
-               std::deque<Direction>& history, std::unordered_set<unsigned int>& inSection) {
+void eraseLoop(GridGraph& graph, int loopNode,
+               std::deque<Direction>& history, std::unordered_set<int>& inSection) {
     // Remove edges until we reach the the node
-    unsigned int currentNode = loopNode;
+    int currentNode = loopNode;
     Direction lastDir, revDir;
     while (!history.empty()) {
         lastDir = history.back();
@@ -179,18 +178,18 @@ void lerwGraph(GridGraph& graph) {
     std::random_device rd;
     std::mt19937 gen(rd());
     // Variables
-    unsigned int currentNode = 0;
-    unsigned int numNodes = graph.getNumNodes();
-    unsigned int nextNode, newNode;
+    int currentNode = 0;
+    int numNodes = graph.getNumNodes();
+    int nextNode, newNode;
     Direction dir;
     // Setup data structures
-    std::unordered_set<unsigned int> notInMaze;
-    std::unordered_set<unsigned int> inSection;
+    std::unordered_set<int> notInMaze;
+    std::unordered_set<int> inSection;
     std::vector<Direction> possibleDirs;
     std::deque<Direction> history;
 
     // Add all to not in maze except starting node
-    for (unsigned int i = 0; i < numNodes; ++i) {
+    for (int i = 0; i < numNodes; ++i) {
         if (i != currentNode) {
             notInMaze.insert(i);
         }
@@ -237,17 +236,18 @@ void dfsGraph(GridGraph& graph) {
     std::random_device rd;
     std::mt19937 gen(rd());
     // Variables
-    unsigned int currentNode = 0;
+    int currentNode = 0;
     Direction lastDir;
     // Setup data structures
-    std::unordered_set<unsigned int> visited;
-    std::stack<unsigned int> nodePath;
+    std::unordered_set<int> visited;
+    std::stack<int> nodePath;
     std::vector<Direction> possibleDirs;
     std::vector<Direction> validDirs;
 
     visited.insert(currentNode);
 
-    while (visited.size() < graph.getNumNodes()) {
+    unsigned int numNodes = graph.getNumNodes();
+    while (visited.size() < numNodes) {
         graph.getPossibleDirs(possibleDirs, currentNode);
         validDirs.clear();
         for (auto dir : possibleDirs) {
