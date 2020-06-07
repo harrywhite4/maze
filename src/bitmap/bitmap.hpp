@@ -46,6 +46,12 @@ struct DIBHeader {
     DIBHeader(uint32_t imageWidth, uint32_t imageHeight, uint16_t bitsPerPixel);
 };
 
+// Color table used for binary bitmap
+const uint8_t colorTable[] = {
+    255, 255, 255, 0,
+    0, 0, 0, 0,
+};
+
 // Reset packing
 #pragma pack(pop)
 

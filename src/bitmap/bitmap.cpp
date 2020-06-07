@@ -82,7 +82,7 @@ void writeBitmap24(std::string fname, Image<Color24>& image) {
         }
         // Write padding at end of a row
         for (int i = 0; i < paddingBytes; ++i) {
-            file << static_cast<char>(0x00);
+            file << static_cast<char>(0);
         }
     }
     file.close();
@@ -106,10 +106,9 @@ void writeBitmapBW(std::string fname, Image<bool>& image, bool verbose = false) 
     }
 
     // Write color table
-    file << static_cast<char>(0xff) << static_cast<char>(0xff)
-         << static_cast<char>(0xff) << static_cast<char>(0x00);
-    file << static_cast<char>(0x00) << static_cast<char>(0x00)
-         << static_cast<char>(0x00) << static_cast<char>(0x00);
+    for (char tableEntry : colorTable) {
+        file << static_cast<char>(tableEntry);
+    }
 
     // Write data
     int paddingBytes = getPaddingBytes(imageWidth, 1);
@@ -146,7 +145,7 @@ void writeBitmapBW(std::string fname, Image<bool>& image, bool verbose = false) 
         }
         // Write padding bytes to row
         for (int i = 0; i < paddingBytes; ++i) {
-            file << static_cast<char>(0x00);
+            file << static_cast<char>(0);
         }
     }
     if (verbose) {
