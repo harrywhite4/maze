@@ -31,7 +31,7 @@ class GridGraph {
     bool vertexEdgeExists(int rowNum, int colNum, Direction dir) const;
 
  public:
-    GridGraph(int numRows, int rowWidth);
+    GridGraph(int numRows, int numColumns);
 
     // Whether node number is valid
     bool validNode(int node) const;
@@ -72,7 +72,7 @@ class GridGraph {
 
     // Get possible directions to move from a given node
     // Does not allow backtracking over set edges
-    void getPossibleDirs(std::vector<Direction>& dirs, int node);
+    void getPossibleDirs(std::vector<Direction>& dirs, int node) const;
 
     // Add a random edge from a list of directions
     Direction addRandomEdge(const std::vector<Direction>& dirs, int node, std::mt19937& gen);

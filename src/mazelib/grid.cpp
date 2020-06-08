@@ -111,39 +111,17 @@ std::optional<int> GridGraph::edgeIndex(int node, Direction dir) const {
 }
 
 bool GridGraph::vertexEdgeExists(int rowNum, int colNum, Direction dir) const {
-    bool result;
-
     switch (dir) {
         case Right:
-            if (colNum < numColumns - 1) {
-                result = true;
-            } else {
-                result = false;
-            }
-            break;
+            return (colNum < numColumns - 1);
         case Left:
-            if (colNum > 0) {
-                result = true;
-            } else {
-                result = false;
-            }
-            break;
+            return (colNum > 0);
         case Down:
-            if (rowNum < numRows - 1) {
-                result = true;
-            } else {
-                result = false;
-            }
-            break;
+            return (rowNum < numRows - 1);
         case Up:
-            if (rowNum > 0) {
-                result = true;
-            } else {
-                result = false;
-            }
-            break;
+            return (rowNum > 0);
     }
-    return result;
+    throw std::out_of_range("Direction was not valid");
 }
 
 bool GridGraph::edgeExists(int node, Direction dir) const {
@@ -161,9 +139,8 @@ bool GridGraph::hasEdge(int node, Direction dir) const {
     if (index.has_value()) {
         if (dir == Left || dir == Right) {
             return horEdges[index.value()];
-        } else {
-            return vertEdges[index.value()];
         }
+        return vertEdges[index.value()];
     }
     return false;
 }
@@ -194,7 +171,7 @@ void GridGraph::removeEdge(int node, Direction dir) {
     setEdge(node, dir, false);
 }
 
-void GridGraph::getPossibleDirs(std::vector<Direction>& possibleDirs, int node) {
+void GridGraph::getPossibleDirs(std::vector<Direction>& possibleDirs, int node) const {
     possibleDirs.clear();
 
     auto column = columnNumber(node);

@@ -1,6 +1,7 @@
 #ifndef BITMAP_BITMAP_HPP_
 #define BITMAP_BITMAP_HPP_
 
+#include <array>
 #include <string>
 #include <vector>
 
@@ -20,7 +21,8 @@ struct Color24 {
 
 // Bitmap file header
 struct FileHeader {
-    uint16_t type = 0x4d42;
+    // "BM" as integer
+    uint16_t type = 0x4d42; // NOLINT
     uint32_t size;
     uint16_t reserved1 = 0;
     uint16_t reserved2 = 0;
@@ -31,25 +33,29 @@ struct FileHeader {
 
 // Bitmap DIB header (BITMAPINFOHEADER style)
 struct DIBHeader {
-    uint32_t thisHeaderSize = 40;
+    uint32_t thisHeaderSize = 40; // NOLINT
     uint32_t imageWidth;
     uint32_t imageHeight;
     uint16_t colorPlanes = 1;
     uint16_t bitsPerPixel;
     uint32_t compressionMethod = 0;
     uint32_t imageSize;
-    uint32_t horResolution = 2835;
-    uint32_t verResolution = 2835;
+    // 72 dpi printing
+    uint32_t horResolution = 2835; // NOLINT
+    uint32_t verResolution = 2835; // NOLINT
     uint32_t numColors = 0;
     uint32_t numImpColors = 0;
 
     DIBHeader(uint32_t imageWidth, uint32_t imageHeight, uint16_t bitsPerPixel);
 };
 
+// Offset for actual image data (size of both headers)
+const unsigned int imageOffset = 54;
+
 // Color table used for binary bitmap
-const uint8_t colorTable[] = {
+const std::array<uint8_t, 8> colorTable = {
     255, 255, 255, 0,
-    0, 0, 0, 0,
+    0,   0,   0,   0,
 };
 
 // Reset packing

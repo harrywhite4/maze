@@ -36,6 +36,7 @@ void validateDimension(int dimension, std::string name) {
 }
 
 // Parse command line arguments
+// NOLINTNEXTLINE: Keeping argv as C array
 cxxopts::ParseResult parseArgs(int argc, char *argv[]) {
     // Argument definition
     cxxopts::Options options("maze", MAZE_DESCRIPTION);

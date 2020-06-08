@@ -16,22 +16,17 @@ namespace mazelib {
 
 
 Direction reverse(Direction dir) {
-    Direction reversed;
     switch (dir) {
         case Left:
-            reversed = Right;
-            break;
+            return Right;
         case Right:
-            reversed = Left;
-            break;
+            return Left;
         case Up:
-            reversed = Down;
-            break;
+            return Down;
         case Down:
-            reversed = Up;
-            break;
+            return Up;
     }
-    return reversed;
+    throw std::out_of_range("Direction was not valid");
 }
 
 bitmap::Image<bool> graphToImage(const GridGraph& graph) {
@@ -101,7 +96,8 @@ std::string graphToText(const GridGraph& graph) {
 
     // Write rows
     for (int row = 0; row < graph.getNumRows(); ++row) {
-        std::string rowTop = "|", rowBottom = "+";
+        std::string rowTop = "|";
+        std::string rowBottom = "+";
         for (int column = 0; column < numColumns; ++column) {
             int nodeNum = graph.nodeNumber(row, column);
             // Add to top
