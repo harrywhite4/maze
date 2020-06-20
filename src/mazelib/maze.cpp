@@ -123,7 +123,7 @@ std::string graphToText(const GridGraph& graph) {
     return s;
 }
 
-int getNewNode(int numNodes, std::unordered_set<int> notInSet) {
+int getNewNode(std::unordered_set<int> notInSet) {
     // Get next node not in maze if there is one
     if (!notInSet.empty()) {
         return *notInSet.begin();
@@ -186,7 +186,7 @@ void lerwGraph(GridGraph& graph) {
     while (!notInMaze.empty()) {
         // If starting again
         if (inSection.empty()) {
-            int newNode = getNewNode(numNodes, notInMaze);
+            int newNode = getNewNode(notInMaze);
             currentNode = newNode;
             inSection.insert(currentNode);
         }
