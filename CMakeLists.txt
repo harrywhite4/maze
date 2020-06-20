@@ -19,8 +19,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 if (MSVC)
     add_compile_options(/W4 /WX)
 else()
-    # Look at adding -Wextra
-    add_compile_options(-Wall -pedantic -Werror)
+    add_compile_options(-Wall -Wextra -pedantic -Werror)
 endif()
 
 # Googletest library
