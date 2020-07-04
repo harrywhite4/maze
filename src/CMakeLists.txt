@@ -12,7 +12,8 @@ set(MAZE_SOURCES
     mazelib/grid.hpp
     mazelib/grid.cpp
     mazelib/maze.hpp
-    mazelib/maze.cpp)
+    mazelib/maze.cpp
+    mazelib/error.hpp)
 
 add_library(mazelib ${MAZE_SOURCES})
 target_link_libraries(mazelib PRIVATE bitmap)

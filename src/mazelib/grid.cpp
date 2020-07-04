@@ -4,6 +4,7 @@
 #include <iostream>
 #include <stdexcept>
 
+#include "mazelib/error.hpp"
 #include "mazelib/grid.hpp"
 
 namespace mazelib {
@@ -21,7 +22,7 @@ bool GridGraph::validNode(int node) const {
 
 void GridGraph::validateNode(int node) const {
     if (!validNode(node)) {
-        throw std::invalid_argument("Invalid node " + std::to_string(node));
+        throw MazeError("Invalid node " + std::to_string(node));
     }
 }
 
@@ -75,7 +76,7 @@ int GridGraph::nodeInDirection(int start, Direction dir) const {
             }
             break;
     }
-    throw std::invalid_argument(
+    throw MazeError(
         "No edge from node " + std::to_string(start) +
         " in direction " + std::to_string(dir) + "\n"
     );
@@ -121,7 +122,7 @@ bool GridGraph::vertexEdgeExists(int rowNum, int colNum, Direction dir) const {
         case Up:
             return (rowNum > 0);
     }
-    throw std::out_of_range("Direction was not valid");
+    throw MazeError("Direction was not valid");
 }
 
 bool GridGraph::edgeExists(int node, Direction dir) const {
@@ -156,7 +157,7 @@ void GridGraph::setEdge(int node, Direction dir, bool value) {
             vertEdges[index.value()] = value;
         }
     } else {
-        throw std::invalid_argument(
+        throw MazeError(
             "No edge from node " + std::to_string(node) +
             " in direction " + std::to_string(dir) + "\n"
         );
@@ -194,7 +195,7 @@ void GridGraph::getPossibleDirs(std::vector<Direction>& possibleDirs, int node) 
 Direction GridGraph::addRandomEdge(const std::vector<Direction>& possibleDirs,
                                    int node, std::mt19937& gen) {
     if (possibleDirs.empty()) {
-        throw std::invalid_argument("Trying to add random edge with no possible directions");
+        throw MazeError("Trying to add random edge with no possible directions");
     }
 
     auto size = possibleDirs.size();

@@ -9,6 +9,7 @@
 
 #include "bitmap/bitmap.hpp"
 #include "bitmap/image.hpp"
+#include "mazelib/error.hpp"
 #include "mazelib/grid.hpp"
 #include "mazelib/maze.hpp"
 
@@ -26,7 +27,7 @@ Direction reverse(Direction dir) {
         case Down:
             return Up;
     }
-    throw std::out_of_range("Direction was not valid");
+    throw MazeError("Direction was not valid");
 }
 
 bitmap::Image<bool> graphToImage(const GridGraph& graph) {
@@ -128,7 +129,7 @@ int getNewNode(std::unordered_set<int> notInSet) {
     if (!notInSet.empty()) {
         return *notInSet.begin();
     }
-    throw std::invalid_argument("Attempting to get new node from empty set");
+    throw MazeError("Attempting to get new node from empty set");
 }
 
 void removeFromSet(std::unordered_set<int>& from, const std::unordered_set<int>& removals) {
@@ -247,7 +248,7 @@ void dfsGraph(GridGraph& graph) {
                 currentNode = nodePath.top();
                 nodePath.pop();
             } else {
-                throw std::out_of_range("node path is empty");
+                throw MazeError("node path is empty");
             }
         }
     }

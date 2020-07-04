@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "MazeConfig.h"
+#include "mazelib/error.hpp"
 #include "mazelib/grid.hpp"
 #include "mazelib/maze.hpp"
 #include "cxxopts.hpp"
@@ -99,7 +100,7 @@ int main(int argc, char *argv[]) {
     } catch (cxxopts::OptionParseException& e) {
         std::cerr << e.what() << "\n";
         exit(EXIT_FAILURE);
-    } catch (std::exception& e) {
+    } catch (mazelib::MazeError& e) {
         std::cerr << "An error has occurred\n";
         exit(EXIT_FAILURE);
     }
