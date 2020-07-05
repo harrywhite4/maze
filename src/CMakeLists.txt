@@ -6,7 +6,7 @@ set(BITMAP_SOURCES
 )
 
 add_library(bitmap ${BITMAP_SOURCES})
-target_include_directories(bitmap PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(bitmap PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Maze library
 set(MAZE_SOURCES
@@ -19,13 +19,15 @@ set(MAZE_SOURCES
 
 add_library(mazelib ${MAZE_SOURCES})
 target_link_libraries(mazelib PRIVATE bitmap)
-target_include_directories(mazelib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(mazelib PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Maze executable
 add_executable(maze main.cpp)
-target_link_libraries(maze cxxopts bitmap mazelib)
+target_link_libraries(maze PRIVATE cxxopts bitmap mazelib)
+# Incliude this dir
+target_include_directories(maze PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 # Include config header
-target_include_directories(maze PUBLIC "${PROJECT_BINARY_DIR}/src")
+target_include_directories(maze PRIVATE "${PROJECT_BINARY_DIR}/src")
 # Ouput to bin directory
 set_target_properties(maze PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
 # Install to bin
