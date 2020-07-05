@@ -101,6 +101,9 @@ int main(int argc, char *argv[]) {
         std::cerr << e.what() << "\n";
         exit(EXIT_FAILURE);
     } catch (mazelib::MazeError& e) {
+        std::cerr << "An error has occurred while constructing maze\n";
+        exit(EXIT_FAILURE);
+    } catch (std::exception& e) {
         std::cerr << "An error has occurred\n";
         exit(EXIT_FAILURE);
     }
