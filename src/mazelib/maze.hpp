@@ -11,16 +11,12 @@
 namespace mazelib {
 
 enum MazeType {Dfs, Wilsons};
-const std::map<std::string, MazeType> mazeTypeMap = {
-    {"dfs", Dfs},
-    {"wilsons", Wilsons},
-};
+std::ostream& operator<<(std::ostream& os, const MazeType& mt);
+std::istream& operator>>(std::istream& is, MazeType& mt);
 
 enum OutputFormat {Bitmap, Text};
-const std::map<std::string, OutputFormat> outputFormatMap = {
-    {"bitmap", Bitmap},
-    {"text", Text},
-};
+std::ostream& operator<<(std::ostream& os, const OutputFormat& of);
+std::istream& operator>>(std::istream& is, OutputFormat& of);
 
 void createMaze(GridGraph& graph, MazeType type);
 void outputMaze(const GridGraph& maze, OutputFormat format, std::string fname, bool verbose);

@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include "gtest/gtest.h"
 #include "mazelib/maze.hpp"
 
@@ -47,4 +49,12 @@ TEST(MazeTest, GenerateRectagularDfsMaze) {
     mazelib::GridGraph graph(10, 30);
     mazelib::dfsGraph(graph);
     validateSpanning(graph);
+}
+
+TEST(MazeTest, StreamInputMazeType) {
+    std::stringstream ss;
+    ss << "wilsons";
+    mazelib::MazeType type;
+    ss >> type;
+    ASSERT_EQ(type, mazelib::Wilsons);
 }

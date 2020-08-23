@@ -6,6 +6,8 @@
 #include <string>
 #include <unordered_set>
 #include <vector>
+#include <cctype>
+#include <iostream>
 
 #include "bitmap/bitmap.hpp"
 #include "bitmap/image.hpp"
@@ -15,6 +17,70 @@
 
 namespace mazelib {
 
+// Read alphabetic characters from stream into string
+// This helper function is used when defining input stream operations
+std::string readAlpha(std::istream& is) {
+    std::string value;
+    // While there are aphabetic characters to read
+    while(std::isalpha(is.peek()) != 0) {
+        value.push_back(is.get());
+    }
+    return value;
+}
+
+// Stream output for MazeType
+std::ostream& operator<<(std::ostream& os, const MazeType& mt) {
+    switch(mt) {
+        case Dfs:
+            os << "dfs";
+            break;
+        case Wilsons:
+            os << "wilsons";
+            break;
+    }
+    return os;
+}
+
+// Stream input for MazeType
+std::istream& operator>>(std::istream& is, MazeType& mt) {
+    std::string value = readAlpha(is);
+
+    if (value == "dfs") {
+        mt = Dfs;
+    } else if (value == "wilsons") {
+        mt = Wilsons;
+    } else {
+        is.setstate(std::ios_base::failbit);
+    }
+    return is;
+}
+
+// Stream output for OutputFormat
+std::ostream& operator<<(std::ostream& os, const OutputFormat& of) {
+    switch(of) {
+        case Bitmap:
+            os << "bitmap";
+            break;
+        case Text:
+            os << "text";
+            break;
+    }
+    return os;
+}
+
+// Stream input for MazeType
+std::istream& operator>>(std::istream& is, OutputFormat& of) {
+    std::string value = readAlpha(is);
+
+    if (value == "bitmap") {
+        of = Bitmap;
+    } else if (value == "text") {
+        of = Text;
+    } else {
+        is.setstate(std::ios_base::failbit);
+    }
+    return is;
+}
 
 Direction reverse(Direction dir) {
     switch (dir) {
