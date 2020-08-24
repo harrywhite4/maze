@@ -28,5 +28,8 @@ target_include_directories(cxxopts INTERFACE extern/cxxopts/include)
 
 # Source
 add_subdirectory(src)
-# Test exceutable
+
+# Testing
+enable_testing()
+add_subdirectory(extern/googletest EXCLUDE_FROM_ALL)
 add_subdirectory(test)

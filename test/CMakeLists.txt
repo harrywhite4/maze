@@ -7,5 +7,6 @@ set(TEST_SOURCES
 add_executable(testmaze ${TEST_SOURCES})
 target_link_libraries(testmaze PRIVATE gtest_main bitmap mazelib)
 target_include_directories(testmaze PRIVATE "${CMAKE_SOURCE_DIR}/src")
-# Ouput to bin directory
-set_target_properties(testmaze PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
+# Discover tests from executable
+include(GoogleTest)
+gtest_discover_tests(testmaze)

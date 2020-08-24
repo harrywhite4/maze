@@ -17,5 +17,4 @@ After this the main executable can be found at `./build/bin/maze`
 
 ## Testing
 
-Building with the above steps will also produce a test executable at `./build/bin/testmaze`.
-Running this will perform various unit tests and report results.
+After a build run `ctest` from the build directory to run the tests.
