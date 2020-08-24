@@ -15,16 +15,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Output compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Conpile options
+# Compile options
 if (MSVC)
     add_compile_options(/W4 /WX)
 else()
     add_compile_options(-Wall -Wextra -pedantic -Werror)
 endif()
 
-# Googletest library
-add_subdirectory(extern/googletest EXCLUDE_FROM_ALL)
-add_subdirectory(extern/cxxopts EXCLUDE_FROM_ALL)
+# Dependencies
+add_library(cxxopts INTERFACE)
+target_include_directories(cxxopts INTERFACE extern/cxxopts/include)
 
 # Source
 add_subdirectory(src)
