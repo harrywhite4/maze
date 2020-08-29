@@ -19,8 +19,8 @@ void validateDimension(int dimension, std::string name) {
     }
 }
 
-// Parse command line arguments
-cxxopts::ParseResult parseArgs(int argc, char** argv) {
+// Build options object
+cxxopts::Options getOptions() {
     // Argument definition
     cxxopts::Options options("maze", MAZE_DESCRIPTION);
     options.add_options()
@@ -34,58 +34,76 @@ cxxopts::ParseResult parseArgs(int argc, char** argv) {
         ("verbose", "Print detailed output", cxxopts::value<bool>())
         ("version", "Print version information", cxxopts::value<bool>())
         ("help", "Print help", cxxopts::value<bool>());
+    return options;
+}
 
-    auto result = options.parse(argc, argv);
+cxxopts::ParseResult parseArgs(cxxopts::Options& options, int argc, char **argv) {
+    auto args = options.parse(argc, argv);
 
     // Print help and exit on --help
-    bool help = result["help"].as<bool>();
+    bool help = args["help"].as<bool>();
     if (help) {
         std::cout << options.help() << "\n";
         exit(EXIT_SUCCESS);
     }
 
     // Print version and exit on --version
-    bool version = result["version"].as<bool>();
+    bool version = args["version"].as<bool>();
     if (version) {
         std::cout << "maze " << MAZE_VERSION << "\n";
         exit(EXIT_SUCCESS);
     }
 
-    return result;
+    // Validate width and height
+    validateDimension(args["width"].as<int>(), "width");
+    validateDimension(args["height"].as<int>(), "height");
+    return args;
 }
 
-// Parse arguments and output maze
-void maze(cxxopts::ParseResult args) {
-    int width = args["width"].as<int>();
-    validateDimension(width, "width");
-    int height = args["height"].as<int>();
-    validateDimension(height, "height");
-
-    // Get enums from mappings
-    auto format = args["format"].as<mazelib::OutputFormat>();
+// Build maze based on command line args
+mazelib::GridGraph buildMaze(const cxxopts::ParseResult& args) {
     auto type = args["type"].as<mazelib::MazeType>();
+    int width = args["width"].as<int>();
+    int height = args["height"].as<int>();
 
     mazelib::GridGraph graph(height, width);
     mazelib::createMaze(graph, type);
+    return graph;
+}
 
+// Show maze in some format based on args
+void showMaze(const mazelib::GridGraph& graph, const cxxopts::ParseResult& args) {
+    // Print maze
+    auto format = args["format"].as<mazelib::OutputFormat>();
     auto fname = args["output"].as<std::string>();
     auto verbose = args["verbose"].as<bool>();
     outputMaze(graph, format, fname, verbose);
-
-    exit(EXIT_SUCCESS);
 }
 
-int main(int argc, char** argv) {
+// Create and output maze based on args
+void maze(cxxopts::Options& options, int argc, char** argv) {
     try {
-        auto args = parseArgs(argc, argv);
-        maze(args);
+        auto args = parseArgs(options, argc, argv);
+        auto graph = buildMaze(args);
+        showMaze(graph, args);
     } catch (cxxopts::OptionParseException& e) {
-        std::cerr << e.what() << "\n";
+        // Handle option parsing error, printing help
+        std::cerr << e.what() << "\n\n";
+        std::cout << options.help() << "\n";
         exit(EXIT_FAILURE);
     } catch (mazelib::MazeError& e) {
         std::cerr << "An error has occurred while constructing maze\n";
         exit(EXIT_FAILURE);
+    }
+}
+
+int main(int argc, char** argv) {
+    try {
+        // Build options here since we need it to output help on parse errors
+        cxxopts::Options options = getOptions();
+        maze(options, argc, argv);
     } catch (std::exception& e) {
+        // Catch any exception at top level
         std::cerr << "An error has occurred\n";
         exit(EXIT_FAILURE);
     }
