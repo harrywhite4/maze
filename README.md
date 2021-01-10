@@ -2,6 +2,8 @@
 
 Command line tool to generate mazes, ouputs as bitmap or text
 
+![Example output](https://i.imgur.com/NZ36gsD.png)
+
 ## Building
 
 Follow these steps to build the project
