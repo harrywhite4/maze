@@ -94,6 +94,7 @@ void writeBitmap24(std::string fname, Image<Color24>& image) {
 }
 
 // Write 1 bit color data to bitmap file with padding
+// TODO: Fix writing when fname contains dir that doesnt exist
 void writeBitmapBW(std::string fname, Image<bool>& image, bool verbose = false) {
     std::ofstream file;
     // Open file for binary output
