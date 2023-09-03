@@ -86,7 +86,7 @@ void maze(cxxopts::Options& options, int argc, char** argv) {
         auto args = parseArgs(options, argc, argv);
         auto graph = buildMaze(args);
         showMaze(graph, args);
-    } catch (cxxopts::OptionParseException& e) {
+    } catch (cxxopts::exceptions::parsing& e) {
         // Handle option parsing error, printing help
         std::cerr << e.what() << "\n\n";
         std::cout << options.help() << "\n";
